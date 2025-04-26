@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача question</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember44987" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p><strong>Подвиг 3.</strong> Имеется следующий фрагмент программы:&nbsp;</p>
+
+                        <pre><code class="hljs language-python">student = ['Троечников С.М.', 2, 3, 3, 2, 3, 4, 3, 5, 5, 1]
+
+match student:
+    case fio, m1, m2, m3:               # 1-й case
+        print(f"{fio}: {m1} {m2} {m3}")
+    case tuple() as fio, m1, m2, m3, *_: # 2-й case
+        print(f"{fio}: {m1} {m2} {m3}")
+    case list() as fio, m1, m2, m3, *_: # 3-й case
+        print(f"{fio}: {m1} {m2} {m3}")
+    case tuple() as fio, m1, m2, m3:    # 4-й case
+        print(f"{fio}: {m1} {m2} {m3}")
+    case _:                             # 5-й case
+        print("Некорректный формат данных")</code></pre>
+
+                        <p>Какой из блоков case сработает?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <input type="checkbox" class="btn-check" id="check-1" name="answer" />
+                <label class="btn btn-outline-secondary text-start" for="check-1">3</label>
+
+                <input type="checkbox" class="btn-check" id="check-2" name="answer" />
+                <label class="btn btn-outline-secondary text-start" for="check-2">4</label>
+
+                <input type="checkbox" class="btn-check" id="check-3" name="answer" />
+                <label class="btn btn-outline-secondary text-start" for="check-3">Произойдет ошибка</label>
+
+                <input type="checkbox" class="btn-check" id="check-4" name="answer" />
+                <label class="btn btn-outline-secondary text-start" for="check-4">1</label>
+
+                <input type="checkbox" class="btn-check" id="check-5" name="answer" />
+                <label class="btn btn-outline-secondary text-start" for="check-5">5</label>
+
+                <input type="checkbox" class="btn-check" id="check-6" name="answer" />
+                <label class="btn btn-outline-secondary text-start" for="check-6">2</label>
+            </div>
+            <!-- Кнопка Run -->
+            <button class="run-button" onclick="collectData()">Run</button>
+        </div>
+        <!-- Подключаем highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем Bootstrap JS -->
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+
+        <script>
+            // Инициализация подсветки кода
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+
+            // Функция для сбора данных от пользователя и отправки в wxPython
+            function collectData() {
+                const checkboxes = document.querySelectorAll('input[name="answer"]:checked');
+                const selectedAnswers = Array.from(checkboxes).map((checkbox) => {
+                    // Находим соответствующий label по атрибуту "for"
+                    const label = document.querySelector(`label[for="${checkbox.id}"]`);
+                    // Возвращаем текст из label
+                    return label ? label.textContent.trim() : "";
+                });
+                window.wx.postMessage(selectedAnswers.join(";_"));
+            }
+        </script>
+    </body>
+</html>

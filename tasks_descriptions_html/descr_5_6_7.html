@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember78409" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p>
+                            <strong>Большой подвиг 7.</strong> На вход программе подаются целые числа, записанные в одну строку через
+                            пробел. Необходимо их прочитать и сохранить в списке. Затем, выполнить сортировку полученного списка по
+                            возрастанию (неубыванию) методом всплывающего пузырька. Идея алгоритма проста и показана на рисунке ниже.
+                        </p>
+
+                        <p style="text-align: center">
+                            <img alt="" height="423" src="img_html_task/task_5_6_7.png" width="492" />
+                        </p>
+
+                        <p>
+                            При первом проходе перебираем все соседние пары элементов и если значение предыдущего элемента (слева) больше
+                            значения следующего (справа), то они меняются местами. (На рисунке 3 и 2 меняются местами). Следующая пара - это
+                            3 и 6. Они уже выстроены по возрастанию, поэтому ничего не делаем и переходим к следующей паре 6 и -1. Меняем
+                            значения местами и видим, что на последнем месте находится максимальное значение 6, что нам и нужно.
+                        </p>
+
+                        <p>
+                            При втором проходе делаем все то же самое, но доходим до предпоследнего элемента, так как последнее значение 6
+                            уже отсортировано. На третьем проходе исключаем уже последние два элемента и так далее. То есть, в этом
+                            алгоритме достаточно сделать N-1 проходов, где N - длина списка.
+                        </p>
+
+                        <p>
+                            Вот идея алгоритма сортировки всплывающего пузырька. Реализуйте его для вводимого списка целых чисел.
+                        </p>
+                        <p>Результат выведите на экран в виде последовательности чисел, записанных в одну строчку через пробел.</p>
+
+                        <p>
+                            <strong>Тесты:</strong>&nbsp;<a
+                                href="https://github.com/selfedu-rus/test-python-base/tree/main/5/5.6.7"
+                                rel="noopener noreferrer nofollow"
+                                >https://github.com/selfedu-rus/test-python-base/tree/main/5/5.6.7</a
+                            >
+                        </p>
+                    </div>
+
+                    <div class="step-text-wrapper">
+                        <p class="step-text__limit-title">
+                            <strong>Sample Input:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">4 5 2 0 6 3 -56 3 -1</pre>
+                        <p class="step-text__limit-title">
+                            <strong>Sample Output:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">-56 -1 0 2 3 3 4 5 6</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

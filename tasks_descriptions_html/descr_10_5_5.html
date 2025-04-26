@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember45614" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p>
+                            <strong>Подвиг 5.</strong> Вводятся данные по книге в виде строки через запятую в формате (некоторые значения
+                            могут отсутствовать):
+                        </p>
+
+                        <p>id, автор, название, цена, год издания</p>
+
+                        <p>с помощью команд:</p>
+
+                        <pre><code class="hljs language-python">t = (<span class="hljs-built_in">int</span>, <span
+                        class="hljs-built_in">str</span>, <span class="hljs-built_in">str</span>, <span
+                        class="hljs-built_in">float</span>, <span class="hljs-built_in">int</span>)
+book = [t[i](x) <span class="hljs-keyword">if</span> t[i] != <span class="hljs-built_in">str</span> <span
+                            class="hljs-keyword">else</span> x.strip() <span class="hljs-keyword">for</span> i, x <span
+                            class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(<span
+                            class="hljs-built_in">input</span>().split(<span class="hljs-string">","</span>))]
+</code></pre>
+
+                        <p>Например, при вводе:</p>
+
+                        <p>"1, Балакирев С.М., Python, 2100, 2023"</p>
+
+                        <p>получим список:</p>
+
+                        <p>book = [1, 'Балакирев С.М.', 'Python', 2100.0, 2023]</p>
+
+                        <p>А при вводе:</p>
+
+                        <p>"1, Балакирев С.М., Python"</p>
+
+                        <p>список:</p>
+
+                        <p>book = [1, 'Балакирев С.М.', 'Python']</p>
+
+                        <p>И так далее.</p>
+
+                        <p>
+                            С помощью оператора match/case необходимо определить шаблоны для выделения следующей информации с
+                            дополнительными проверками:
+                        </p>
+
+                        <ul>
+                            <li>автор, название (автор - не менее 6 символов, название - не менее 10 символов)</li>
+                            <li>автор, название, цена (автор не менее 6 символов, цена - положительное число)</li>
+                            <li>автор, название, год издания (год издания от 2020 и выше)</li>
+                            <li>автор, название, цена, год издания (цена - положительное число и год издания от 2020 и выше)</li>
+                        </ul>
+
+                        <p>
+                            Первый шаблон срабатывает, если есть только автор и название; второй, если появляется еще и цена; третий, если
+                            есть&nbsp;автор, название, год издания, но нет цены; последний, если имеются все данные.
+                        </p>
+
+                        <p>
+                            При срабатывании шаблона вывести на экран строку "Yes". Если ни один из шаблонов не сработал, то вывести строку
+                            "No".
+                        </p>
+
+                        <p>
+                            <strong>Тесты:</strong>&nbsp;<a
+                                href="https://github.com/selfedu-rus/test-python-base/tree/main/10/10.5.5"
+                                rel="noopener noreferrer nofollow"
+                                >https://github.com/selfedu-rus/test-python-base/tree/main/10/10.5.5</a
+                            >
+                        </p>
+                    </div>
+
+                    <div class="step-text-wrapper">
+                        <p class="step-text__limit-title">
+                            <strong>Sample Input:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">1, Балакирев С.М., Python, 2100.0, 2023</pre>
+                        <p class="step-text__limit-title">
+                            <strong>Sample Output:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">Yes</pre>
+                    </div>
+                </div>
+            </div>
+
+            <pre class="add-code-console"><code class="hljs language-python"># Вставьте этот код в консоль и дополните исходя из задания
+t = (int, str, str, float, int)
+book = [t[i](x) if t[i] != str else x.strip() for i, x in enumerate(input().split(","))]</code></pre>
+        </div>
+    </body>
+</html>

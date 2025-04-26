@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember93816" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p>
+                            <strong>Подвиг 3.</strong>&nbsp;На вход программе подается строка из русских букв и символов пробела. Необходимо
+                            ее прочитать и закодировать азбукой Морзе, где каждой букве ставится в соответствие код из точки и тире. После
+                            каждой закодированной буквы должен стоять пробел (символ окончания кода буквы). После последнего кода пробела
+                            быть не должно (в конце строки). Коды азбуки Морзе приведены ниже для русского алфавита и символа пробела:
+                        </p>
+
+                        <table class="table table-bordered table-striped w-50">
+                            <tbody>
+                                <tr>
+                                    <td>А&nbsp;&nbsp; &nbsp;.-</td>
+                                    <td>М&nbsp;&nbsp; &nbsp;--</td>
+                                    <td>Ш&nbsp;&nbsp; &nbsp;----</td>
+                                </tr>
+                                <tr>
+                                    <td>Б&nbsp;&nbsp; &nbsp;-...</td>
+                                    <td>Н&nbsp;&nbsp; &nbsp;-.</td>
+                                    <td>Щ&nbsp;&nbsp; &nbsp;--.-</td>
+                                </tr>
+                                <tr>
+                                    <td>В&nbsp;&nbsp; &nbsp;.--</td>
+                                    <td>О&nbsp;&nbsp; &nbsp;---</td>
+                                    <td>Ъ&nbsp;&nbsp; &nbsp;--.--</td>
+                                </tr>
+                                <tr>
+                                    <td>Г&nbsp;&nbsp; &nbsp;--.</td>
+                                    <td>П&nbsp;&nbsp; &nbsp;.--.</td>
+                                    <td>Ы&nbsp;&nbsp; &nbsp;-.--</td>
+                                </tr>
+                                <tr>
+                                    <td>Д&nbsp;&nbsp; &nbsp;-..</td>
+                                    <td>Р&nbsp;&nbsp; &nbsp;.-.</td>
+                                    <td>Ь&nbsp;&nbsp; &nbsp;-..-</td>
+                                </tr>
+                                <tr>
+                                    <td>Е (Ё)&nbsp;&nbsp; &nbsp;.</td>
+                                    <td>С&nbsp;&nbsp; &nbsp;...</td>
+                                    <td>Э&nbsp;&nbsp; &nbsp;..-..</td>
+                                </tr>
+                                <tr>
+                                    <td>Ж&nbsp;&nbsp; &nbsp;...-</td>
+                                    <td>Т&nbsp;&nbsp; &nbsp;-</td>
+                                    <td>Ю&nbsp;&nbsp; &nbsp;..--</td>
+                                </tr>
+                                <tr>
+                                    <td>З&nbsp;&nbsp; &nbsp;--..</td>
+                                    <td>У&nbsp;&nbsp; &nbsp;..-</td>
+                                    <td>Я&nbsp;&nbsp; &nbsp;.-.-</td>
+                                </tr>
+                                <tr>
+                                    <td>И&nbsp;&nbsp; &nbsp;..</td>
+                                    <td>Ф&nbsp;&nbsp; &nbsp;..-.</td>
+                                    <td>' '&nbsp; &nbsp; -...-</td>
+                                </tr>
+                                <tr>
+                                    <td>Й&nbsp;&nbsp; &nbsp;.---</td>
+                                    <td>Х&nbsp;&nbsp; &nbsp;....</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>К&nbsp;&nbsp; &nbsp;-.-</td>
+                                    <td>Ц&nbsp;&nbsp; &nbsp;-.-.</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>Л&nbsp;&nbsp; &nbsp;.-..</td>
+                                    <td>Ч&nbsp;&nbsp; &nbsp;---.</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p>Результат кодирования вывести в виде строки.</p>
+
+                        <p class="ps-note">
+                            P.S. Для очень ленивых готовый словарь азбуки Морзе можно скачать по адресу:
+                            https://github.com/selfedu-rus/others (файл morze-dict.py). Для практики лучше его составить самостоятельно. Да,
+                            работа программиста зачастую связана и с такой рутиной.
+                        </p>
+
+                        <p>
+                            <strong>Тесты:</strong>&nbsp;<a
+                                href="https://github.com/selfedu-rus/test-python-base/tree/main/6/6.2.3"
+                                rel="noopener noreferrer nofollow"
+                                >https://github.com/selfedu-rus/test-python-base/tree/main/6/6.2.3</a
+                            >
+                        </p>
+                    </div>
+
+                    <div class="step-text-wrapper">
+                        <p class="step-text__limit-title">
+                            <strong>Sample Input:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">Сергей Балакирев</pre>
+                        <p class="step-text__limit-title">
+                            <strong>Sample Output:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">... . .-. --. . .--- -...- -... .- .-.. .- -.- .. .-. . .--</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

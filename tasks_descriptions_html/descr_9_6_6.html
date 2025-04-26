@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember39657" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p><strong>Подвиг 6.</strong> На вход программе поступает список товаров в виде строк формата:</p>
+
+                        <p>
+                            название_1:цена_1<br />
+                            ...<br />
+                            название_N:цена_N
+                        </p>
+
+                        <p>В программе уже реализовано считывание всех этих строк и сохранение в списке lst_in:</p>
+
+                        <pre><code class="hljs language-python">lst_in = list(<span class="hljs-name">map</span>(<span
+                        class="hljs-name">str</span>.strip, sys.stdin.readlines()))</code></pre>
+
+                        <p>
+                            Необходимо преобразовать этот список в словарь, ключами которого выступают цены (целые числа), а значениями -
+                            соответствующие названия товаров. Также необходимо написать функцию, которая бы принимала на входе словарь
+                            указанного формата и возвращала список из наименований трех наиболее дешевых товаров.
+                        </p>
+
+                        <p>
+                            Вызовите эту функцию и отобразите на экране полученный список в порядке возрастания цены в одну строчку через
+                            пробел.
+                        </p>
+
+                        <p>
+                            <strong>Тесты:</strong>&nbsp;<a
+                                href="https://github.com/selfedu-rus/test-python-base/tree/main/9/9.6.6"
+                                rel="noopener noreferrer nofollow"
+                                >https://github.com/selfedu-rus/test-python-base/tree/main/9/9.6.6</a
+                            >
+                        </p>
+                    </div>
+
+                    <div class="step-text-wrapper">
+                        <p class="step-text__limit-title">
+                            <strong>Sample Input:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">
+смартфон:120000
+яблоко:2
+сумка:560
+брюки:2500
+линейка:10
+бумага:500</pre
+                        >
+                        <p class="step-text__limit-title">
+                            <strong>Sample Output:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">яблоко линейка бумага</pre>
+                    </div>
+                </div>
+            </div>
+
+            <pre class="add-code-console"><code class="hljs language-python"># Вставьте этот код в консоль и дополните исходя из задания
+import sys
+
+# считывание списка из входного потока
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+
+# здесь продолжайте программу (используйте список строк lst_in)</code></pre>
+        </div>
+    </body>
+</html>

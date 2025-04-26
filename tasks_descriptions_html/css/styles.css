@@ -1,0 +1,156 @@
+/* Пример стилей */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 5px;
+}
+
+h1 {
+    color: #333;
+}
+
+h2 {
+    color: #555;
+}
+
+p {
+    margin: 10px 0;
+    color: #666;
+}
+
+ul {
+    margin: 5px 0;
+    padding-left: 20px;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/*Стиль рамка блока*/
+.step-text-wrapper {
+    border: 0.1em solid #b6c0ff;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #f9f9f9;
+    /*box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);*/
+}
+
+/* Стили для класса .ps-note */
+.ps-note {
+    border: 0.1em solid #b6c0ff; /* Рамка толщиной 0.2em */
+    border-radius: 5px; /* Скругление углов 5 пикселей */
+    padding: 5px; /* Отступ внутри рамки */
+    background-color: #f0f0f0; /* Серый фон */
+    margin: 5px 0; /* Отступы снаружи */
+    color: red; /* Красный цвет текста */
+}
+
+/* Стиль для блоков кода, которые нужно добавить в консоль для решения задания*/
+.add-code-console {
+    border: 0.2em solid #ff0000ff; /* Рамка толщиной 2px, цвет серый */
+    border-radius: 5px; /* Скругление углов 8px */
+    /*padding: 5px; !* Отступ внутри рамки *!*/
+    background-color: #f9f9f9; /* Светло-серый фон */
+    overflow: auto; /* Добавляем прокрутку, если содержимое выходит за рамки */
+}
+
+/*================Стили для страниц отвечающих за перетаскивание элементов описания =====================*/
+
+/* Основной контейнер */
+.container {
+    display: flex !important;
+    width: 100% !important; /* Занимает всю ширину страницы */
+    gap: 5px !important; /* Минимальное расстояние между левыми и правыми полями */
+    flex-wrap: wrap !important; /* Чтобы поля могли перетекать на следующую строку при уменьшении ширины */
+    overflow: auto !important; /* Добавляем прокрутку, если содержимое выходит за рамки */
+}
+
+/* Стили для статических полей слева */
+.static-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: stretch; /* Растягиваем поля по высоте */
+    flex: 1 1 auto; /* Занимает примерно половину ширины */
+}
+
+.static-field {
+    padding: 5px;
+    padding-right: 10px; /* Отступ текста от левого края */
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 10px 0 0 10px; /* Скругление только с левой стороны */
+    cursor: default; /* Курсор по умолчанию, так как поля статичны */
+    box-sizing: border-box; /* Учитываем padding в общей высоте */
+    display: flex;
+    justify-content: flex-end; /* Выравниваем содержимое по правому краю */
+    align-items: center; /* Выравниваем текст по центру по вертикали */
+    width: 100%; /* Занимает всю доступную ширину */
+}
+
+/* Стили для перетаскиваемых полей справа */
+.draggable-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: stretch; /* Растягиваем поля по высоте */
+    flex: 1 1 48%; /* Занимает примерно половину ширины */
+}
+
+.draggable-field {
+    padding: 5px;
+    padding-left: 10px; /* Отступ текста от левого края */
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 0 10px 10px 0; /* Скругление только с правой стороны */
+    cursor: grab;
+    box-sizing: border-box; /* Учитываем padding в общей высоте */
+    display: flex;
+    align-items: center; /* Выравниваем текст по центру по вертикали */
+    width: 100%; /* Занимает всю доступную ширину */
+}
+
+/* Стиль для "призрачного" элемента при перетаскивании */
+.blue-background-class {
+    background-color: #cce5ff;
+}
+
+/* Стили для кнопки Run */
+.run-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    color: black;
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 20px;
+    /*background-color: #4CAF50; !* Цвет фона для обычного состояния *!*/
+}
+
+/* Стили при наведении */
+.run-button:hover {
+    background-color: #cce5ff;
+}
+
+/* Стили при нажатии */
+.run-button:active {
+    background-color: #65b0ff; /* Цвет фона при нажатии */
+    color: white; /* Изменяем цвет текста при нажатии */
+}
+
+/*=============================================END================================= =====================*/

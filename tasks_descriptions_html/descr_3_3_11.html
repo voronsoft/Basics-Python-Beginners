@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача dragdrop</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <script src="js/sortable.min.js"></script>
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div><h4>Установите соответствия между значением и их описаниями.</h4></div>
+
+        <div class="container">
+            <!-- Статические поля слева -->
+            <div class="static-fields">
+                <div class="static-field"><p>String.rjust</p></div>
+                <div class="static-field"><p>String.ljust</p></div>
+                <div class="static-field"><p>String.strip</p></div>
+                <div class="static-field"><p>String.rstrip</p></div>
+                <div class="static-field"><p>String.lstrip</p></div>
+                <div class="static-field"><p>String.rfind</p></div>
+            </div>
+
+            <!-- Перетаскиваемые поля справа -->
+            <div id="draggable-fields" class="draggable-fields">
+                <div class="draggable-field">
+                    <p>Удаляет пробелы и переносы строк слева</p>
+                </div>
+                <div class="draggable-field">
+                    <p>Расширяет строку, добавляя символы слева</p>
+                </div>
+                <div class="draggable-field">
+                    <p>Возвращает индекс первого найденного вхождения при поиске справа</p>
+                </div>
+                <div class="draggable-field">
+                    <p>Расширяет строку, добавляя символы справа</p>
+                </div>
+                <div class="draggable-field">
+                    <p>Удаляет пробелы и переносы строк справа и слева</p>
+                </div>
+                <div class="draggable-field">
+                    <p>Удаляет пробелы и переносы строк справа</p>
+                </div>
+            </div>
+            <!-- Кнопка Run -->
+            <button class="run-button">Run</button>
+        </div>
+
+        <script>
+            // Функция для установки одинаковой высоты для всех полей
+            function setEqualHeight() {
+                const fields = document.querySelectorAll(".static-field, .draggable-field");
+
+                // Сбрасываем высоту, чтобы правильно вычислить максимальную
+                fields.forEach((field) => (field.style.height = "auto"));
+
+                // Получаем максимальную высоту среди всех полей
+                let maxHeight = Math.max(...Array.from(fields).map((field) => field.offsetHeight));
+
+                // Применяем максимальную высоту ко всем полям
+                fields.forEach((field) => (field.style.height = `${maxHeight}px`));
+            }
+
+            // Собирает соответствия статических и перетаскиваемых полей в объект.
+            function getMapping() {
+                let mapping = {};
+                let staticFields = document.querySelectorAll(".static-field");
+                let draggableFields = document.querySelectorAll(".draggable-field");
+
+                staticFields.forEach((staticField, index) => {
+                    let correspondingDraggable = draggableFields[index];
+                    if (correspondingDraggable) {
+                        mapping[staticField.textContent.trim()] = correspondingDraggable.textContent.trim();
+                    }
+                });
+
+                return mapping;
+            }
+
+            // Преобразует объект в JSON и передает его через window.location.href
+            function sendMappingToWxPython() {
+                let mapping = getMapping();
+                let jsonString = JSON.stringify(mapping);
+                // Передаем данные обратно в Python через URL-схему wxPython
+                window.location.href = `wv-event://mapping?data=${encodeURIComponent(jsonString)}`;
+            }
+
+            // Инициализация SortableJS для перетаскиваемых полей
+            new Sortable(document.getElementById("draggable-fields"), {
+                animation: 150, // Анимация при перетаскивании
+                ghostClass: "blue-background-class", // Класс для "призрачного" элемента
+                onStart: setEqualHeight, // Устанавливаем высоту при старте перетаскивания
+                onEnd: setEqualHeight // Устанавливаем высоту после завершения перетаскивания
+            });
+
+            // Устанавливаем высоту при загрузке страницы и при изменении размера окна
+            window.addEventListener("load", setEqualHeight);
+            window.addEventListener("resize", setEqualHeight);
+
+            document.querySelector(".run-button").addEventListener("click", sendMappingToWxPython);
+        </script>
+    </body>
+</html>

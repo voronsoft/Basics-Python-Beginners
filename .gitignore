@@ -1,0 +1,10 @@
+.git/
+.idea/
+.venv
+__pycache__/
+installer_files/Output/
+build/
+dist/
+installer_files/
+# Игнорировать .mp4 везде
+*.mp4

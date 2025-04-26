@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача dragdrop</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <script src="js/sortable.min.js"></script>
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <p><strong>Подвиг 6.</strong> Установите соответствия между методами списков и их описанием.</p>
+
+        <div class="container">
+            <!-- Статические поля слева -->
+            <div class="static-fields">
+                <div class="static-field"><p>copy</p></div>
+                <div class="static-field"><p>count</p></div>
+                <div class="static-field"><p>index</p></div>
+                <div class="static-field"><p>reverse</p></div>
+                <div class="static-field"><p>sort</p></div>
+            </div>
+
+            <!-- Перетаскиваемые поля справа -->
+            <div id="draggable-fields" class="draggable-fields">
+                <div class="draggable-field">
+                    <p>Сортирует элементы списка</p>
+                </div>
+                <div class="draggable-field">
+                    <p>Возвращает копию списка</p>
+                </div>
+                <div class="draggable-field">
+                    <p>Возвращает индекс первого найденного элемента</p>
+                </div>
+                <div class="draggable-field">
+                    <p>Меняет порядок следования элементов на обратный</p>
+                </div>
+                <div class="draggable-field">
+                    <p>Возвращает число элементов с указанным значением</p>
+                </div>
+            </div>
+            <!-- Кнопка Run -->
+            <button class="run-button">Run</button>
+        </div>
+
+        <script>
+            // Функция для установки одинаковой высоты для всех полей
+            function setEqualHeight() {
+                const fields = document.querySelectorAll(".static-field, .draggable-field");
+
+                // Сбрасываем высоту, чтобы правильно вычислить максимальную
+                fields.forEach((field) => (field.style.height = "auto"));
+
+                // Получаем максимальную высоту среди всех полей
+                let maxHeight = Math.max(...Array.from(fields).map((field) => field.offsetHeight));
+
+                // Применяем максимальную высоту ко всем полям
+                fields.forEach((field) => (field.style.height = `${maxHeight}px`));
+            }
+
+            // Собирает соответствия статических и перетаскиваемых полей в объект.
+            function getMapping() {
+                let mapping = {};
+                let staticFields = document.querySelectorAll(".static-field");
+                let draggableFields = document.querySelectorAll(".draggable-field");
+
+                staticFields.forEach((staticField, index) => {
+                    let correspondingDraggable = draggableFields[index];
+                    if (correspondingDraggable) {
+                        mapping[staticField.textContent.trim()] = correspondingDraggable.textContent.trim();
+                    }
+                });
+
+                return mapping;
+            }
+
+            // Преобразует объект в JSON и передает его через window.location.href
+            function sendMappingToWxPython() {
+                let mapping = getMapping();
+                let jsonString = JSON.stringify(mapping);
+                // Передаем данные обратно в Python через URL-схему wxPython
+                window.location.href = `wv-event://mapping?data=${encodeURIComponent(jsonString)}`;
+            }
+
+            // Инициализация SortableJS для перетаскиваемых полей
+            new Sortable(document.getElementById("draggable-fields"), {
+                animation: 150, // Анимация при перетаскивании
+                ghostClass: "blue-background-class", // Класс для "призрачного" элемента
+                onStart: setEqualHeight, // Устанавливаем высоту при старте перетаскивания
+                onEnd: setEqualHeight // Устанавливаем высоту после завершения перетаскивания
+            });
+
+            // Устанавливаем высоту при загрузке страницы и при изменении размера окна
+            window.addEventListener("load", setEqualHeight);
+            window.addEventListener("resize", setEqualHeight);
+
+            document.querySelector(".run-button").addEventListener("click", sendMappingToWxPython);
+        </script>
+    </body>
+</html>

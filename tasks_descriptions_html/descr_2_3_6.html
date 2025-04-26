@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember22153" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p>
+                            <strong>Подвиг 6. </strong>Допишите программу для нахождения числа&nbsp;сочетаний из n по k (значения вводятся в
+                            программе), используя формулу
+                            <span
+                                ><span class="katex"
+                                    ><span class="katex-mathml"
+                                        ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                                            ><semantics
+                                                ><mrow
+                                                    ><mstyle scriptlevel="0" displaystyle="true"
+                                                        ><msubsup><mi>C</mi><mi>n</mi><mi>k</mi></msubsup
+                                                        ><mo>=</mo
+                                                        ><mfrac
+                                                            ><mrow><mi>n</mi><mo stretchy="false">!</mo></mrow
+                                                            ><mrow
+                                                                ><mi>k</mi><mo stretchy="false">!</mo><mo>⋅</mo><mo stretchy="false">(</mo
+                                                                ><mi>n</mi><mo>−</mo><mi>k</mi><mo stretchy="false">)</mo
+                                                                ><mo stretchy="false">!</mo></mrow
+                                                            ></mfrac
+                                                        ></mstyle
+                                                    ></mrow
+                                                ><annotation encoding="application/x-tex"
+                                                    >\displaystyle C_n^k = \frac{n!}{k! \cdot (n-k)!}</annotation
+                                                ></semantics
+                                            ></math
+                                        ></span
+                                    ><span class="katex-html" aria-hidden="true"
+                                        ><span class="base"
+                                            ><span class="strut" style="height: 1.14611em; vertical-align: -0.247em"></span
+                                            ><span class="mord"
+                                                ><span class="mord mathnormal" style="margin-right: 0.07153em">C</span
+                                                ><span class="msupsub"
+                                                    ><span class="vlist-t vlist-t2"
+                                                        ><span class="vlist-r"
+                                                            ><span class="vlist" style="height: 0.899108em"
+                                                                ><span
+                                                                    class=""
+                                                                    style="top: -2.453em; margin-left: -0.07153em; margin-right: 0.05em"
+                                                                    ><span class="pstrut" style="height: 2.7em"></span
+                                                                    ><span class="sizing reset-size6 size3 mtight"
+                                                                        ><span class="mord mathnormal mtight">n</span></span
+                                                                    ></span
+                                                                ><span class="" style="top: -3.113em; margin-right: 0.05em"
+                                                                    ><span class="pstrut" style="height: 2.7em"></span
+                                                                    ><span class="sizing reset-size6 size3 mtight"
+                                                                        ><span
+                                                                            class="mord mathnormal mtight"
+                                                                            style="margin-right: 0.03148em"
+                                                                            >k</span
+                                                                        ></span
+                                                                    ></span
+                                                                ></span
+                                                            ><span class="vlist-s">​</span></span
+                                                        ><span class="vlist-r"
+                                                            ><span class="vlist" style="height: 0.247em"
+                                                                ><span class=""></span></span></span></span></span></span
+                                            ><span class="mspace" style="margin-right: 0.277778em"></span><span class="mrel">=</span
+                                            ><span class="mspace" style="margin-right: 0.277778em"></span></span
+                                        ><span class="base"
+                                            ><span class="strut" style="height: 2.30744em; vertical-align: -0.936em"></span
+                                            ><span class="mord"
+                                                ><span class="mopen nulldelimiter"></span
+                                                ><span class="mfrac"
+                                                    ><span class="vlist-t vlist-t2"
+                                                        ><span class="vlist-r"
+                                                            ><span class="vlist" style="height: 1.37144em"
+                                                                ><span class="" style="top: -2.314em"
+                                                                    ><span class="pstrut" style="height: 3em"></span
+                                                                    ><span class="mord"
+                                                                        ><span class="mord mathnormal" style="margin-right: 0.03148em"
+                                                                            >k</span
+                                                                        ><span class="mclose">!</span
+                                                                        ><span class="mspace" style="margin-right: 0.222222em"></span
+                                                                        ><span class="mbin">⋅</span
+                                                                        ><span class="mspace" style="margin-right: 0.222222em"></span
+                                                                        ><span class="mopen">(</span><span class="mord mathnormal">n</span
+                                                                        ><span class="mspace" style="margin-right: 0.222222em"></span
+                                                                        ><span class="mbin">−</span
+                                                                        ><span class="mspace" style="margin-right: 0.222222em"></span
+                                                                        ><span class="mord mathnormal" style="margin-right: 0.03148em"
+                                                                            >k</span
+                                                                        ><span class="mclose">)!</span></span
+                                                                    ></span
+                                                                ><span class="" style="top: -3.23em"
+                                                                    ><span class="pstrut" style="height: 3em"></span
+                                                                    ><span
+                                                                        class="frac-line"
+                                                                        style="border-bottom-width: 0.04em"></span></span
+                                                                ><span class="" style="top: -3.677em"
+                                                                    ><span class="pstrut" style="height: 3em"></span
+                                                                    ><span class="mord"
+                                                                        ><span class="mord mathnormal">n</span
+                                                                        ><span class="mclose">!</span></span
+                                                                    ></span
+                                                                ></span
+                                                            ><span class="vlist-s">​</span></span
+                                                        ><span class="vlist-r"
+                                                            ><span class="vlist" style="height: 0.936em"
+                                                                ><span class=""></span></span></span></span></span
+                                                ><span class="mclose nulldelimiter"></span></span></span></span></span></span
+                            >, где&nbsp;<span
+                                ><span class="katex"
+                                    ><span class="katex-mathml"
+                                        ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                                            ><semantics
+                                                ><mrow
+                                                    ><mi>n</mi><mo stretchy="false">!</mo><mo>=</mo><mn>1</mn><mo>⋅</mo><mn>2</mn><mo>⋅</mo
+                                                    ><mo>⋯</mo><mo>⋅</mo><mi>n</mi></mrow
+                                                ><annotation encoding="application/x-tex"
+                                                    >n! = 1\cdot 2 \cdot \cdots \cdot n</annotation
+                                                ></semantics
+                                            ></math
+                                        ></span
+                                    ><span class="katex-html" aria-hidden="true"
+                                        ><span class="base"
+                                            ><span class="strut" style="height: 0.69444em; vertical-align: 0em"></span
+                                            ><span class="mord mathnormal">n</span><span class="mclose">!</span
+                                            ><span class="mspace" style="margin-right: 0.277778em"></span><span class="mrel">=</span
+                                            ><span class="mspace" style="margin-right: 0.277778em"></span></span
+                                        ><span class="base"
+                                            ><span class="strut" style="height: 0.64444em; vertical-align: 0em"></span
+                                            ><span class="mord">1</span><span class="mspace" style="margin-right: 0.222222em"></span
+                                            ><span class="mbin">⋅</span><span class="mspace" style="margin-right: 0.222222em"></span></span
+                                        ><span class="base"
+                                            ><span class="strut" style="height: 0.64444em; vertical-align: 0em"></span
+                                            ><span class="mord">2</span><span class="mspace" style="margin-right: 0.222222em"></span
+                                            ><span class="mbin">⋅</span><span class="mspace" style="margin-right: 0.222222em"></span></span
+                                        ><span class="base"
+                                            ><span class="strut" style="height: 0.44445em; vertical-align: 0em"></span
+                                            ><span class="minner">⋯</span><span class="mspace" style="margin-right: 0.222222em"></span
+                                            ><span class="mbin">⋅</span><span class="mspace" style="margin-right: 0.222222em"></span></span
+                                        ><span class="base"
+                                            ><span class="strut" style="height: 0.43056em; vertical-align: 0em"></span
+                                            ><span class="mord mathnormal">n</span></span
+                                        ></span
+                                    ></span
+                                ></span
+                            >. Выведите результат в консоль в виде целого числа с помощью функции print.
+                        </p>
+
+                        <p>Для вычисления факториалов воспользуйтесь соответствующей функцией из библиотеки math.</p>
+                    </div>
+
+                    <div class="step-text-wrapper">
+                        <p class="step-text__limit-title">
+                            <strong>Sample Input:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">
+6 3
+</pre
+                        >
+                        <p class="step-text__limit-title">
+                            <strong>Sample Output:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">20</pre>
+                    </div>
+                </div>
+            </div>
+            <pre class="add-code-console"><code class="hljs language-python"># Вставьте этот код в консоль и дополните исходя из задания
+# ввод данных
+n, k = map(int, input().split())
+
+# здесь продолжите программу</code></pre>
+        </div>
+    </body>
+</html>

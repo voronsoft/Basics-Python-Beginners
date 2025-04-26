@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача question</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember26542" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p>
+                            <strong>Подвиг 2.</strong> Какой результат (True или False) будет получен при выполнении команды 10 &gt; 5?
+                            Ответить нужно без ее исполнения.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <input type="checkbox" class="btn-check" id="check-1" name="answer" />
+                <label class="btn btn-outline-secondary text-start" for="check-1">True</label>
+
+                <input type="checkbox" class="btn-check" id="check-2" name="answer" />
+                <label class="btn btn-outline-secondary text-start" for="check-2">False</label>
+            </div>
+            <!-- Кнопка Run -->
+            <button class="run-button" onclick="collectData()">Run</button>
+        </div>
+        <!-- Подключаем highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем Bootstrap JS -->
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+
+        <script>
+            // Инициализация подсветки кода
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+
+            // Функция для сбора данных от пользователя и отправки в wxPython
+            function collectData() {
+                const checkboxes = document.querySelectorAll('input[name="answer"]:checked');
+                const selectedAnswers = Array.from(checkboxes).map((checkbox) => {
+                    // Находим соответствующий label по атрибуту "for"
+                    const label = document.querySelector(`label[for="${checkbox.id}"]`);
+                    // Возвращаем текст из label
+                    return label ? label.textContent.trim() : "";
+                });
+                window.wx.postMessage(selectedAnswers.join(";_"));
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Сертификат об окончании курса Python</title>
+        <style>
+            body {
+                font-family: "Arial", sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f0f8ff;
+                color: #333;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            header {
+                background: linear-gradient(to right, #306998, #ffd43b);
+                color: white;
+                padding: 20px;
+                text-align: center;
+                border-bottom: 5px solid #ffd43b;
+            }
+
+            header h1 {
+                font-size: 2.5em;
+                font-weight: bold;
+                margin: 0;
+            }
+
+            h3 {
+                color: #306998;
+                font-size: 1.3em;
+                text-align: center;
+            }
+
+            .certificate-container {
+                width: 90%;
+                max-width: 800px;
+                margin: 20px auto;
+                background: white;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .watermark {
+                position: absolute;
+                top: 62%;
+                left: 53%;
+                transform: translate(-50%, -50%); /* Центрирование + поворот */
+                opacity: 0.33; /* Прозрачность логотипа*/
+                z-index: 1;
+                width: 80%; /* Размер лого */
+                max-width: 450px;
+                filter: brightness(1.1); /* Улучшает видимость на белом фоне */
+                pointer-events: none; /* Защита от кликов */
+            }
+
+            .certificate-body {
+                padding: 30px;
+                text-align: center;
+                position: relative;
+                z-index: 2;
+            }
+
+            .certificate-logo {
+                font-size: 24px;
+                color: #306998;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+
+            .student-name {
+                font-size: 2em;
+                color: #ffd43b;
+                background-color: #306998;
+                padding: 10px 20px;
+                display: inline-block;
+                margin: 20px 0;
+                border-radius: 5px;
+                text-transform: uppercase;
+            }
+
+            .course-info {
+                font-size: 1.2em;
+                color: #306998;
+                line-height: 1.6;
+                margin: 10px 10px 10px 10px;
+            }
+
+            .signatures {
+                display: flex;
+                justify-content: space-around;
+                margin-top: 20px;
+            }
+
+            .signature {
+                width: 200px;
+                text-align: center;
+            }
+
+            .signature-line {
+                border-top: 1px solid #306998;
+                margin: 10px auto;
+                width: 80%;
+            }
+
+            .date {
+                margin-top: 30px;
+                font-style: italic;
+            }
+
+            .stamp {
+                position: absolute;
+                right: 50px;
+                bottom: 50px;
+                opacity: 0.7;
+                width: 100px;
+            }
+
+            footer {
+                background-color: #306998;
+                color: #ffd43b;
+                text-align: center;
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .generated-by {
+                font-size: 12px;
+                color: #ffd43b;
+                margin-top: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="outer-container">
+            <div class="certificate-container">
+                <!-- Большой полупрозрачный логотип Python -->
+                <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1400px-Python-logo-notext.svg.png"
+                    alt="Python Watermark"
+                    class="watermark" />
+
+                <header>
+                    <h1>СЕРТИФИКАТ</h1>
+                    <p>Сертификат выдан в подтверждение успешного завершения курса</p>
+                </header>
+
+                <div class="certificate-body">
+                    <div class="certificate-logo">Обучение основам Python для начинающих</div>
+
+                    <h3>Настоящим удостоверяется, что</h3>
+
+                    <div class="student-name" id="student-name">[ИМЯ СТУДЕНТА]</div>
+
+                    <div class="course-info">
+                        успешно завершил(а) курс
+                        <strong>"Основы Python"</strong><br />
+                        в объёме 20 академических часов<br />
+                        и освоил(а) базовые концепции программирования
+                    </div>
+
+                    <div class="signatures">
+                        <div class="signature">
+                            <div class="signature-line"></div>
+                            <p>Преподаватель курса</p>
+                            <p><a href="https://www.youtube.com/@selfedu_rus">Сергей Балакирев</a></p>
+                        </div>
+                        <div class="signature">
+                            <div class="signature-line"></div>
+                            <p>Дата выдачи</p>
+                            <p id="date_gen_sert">[ДАТА ВЫДАЧИ]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <footer>
+                    <div class="generated-by">
+                        Сертификат сгенерирован приложением
+                        <strong>Basics Python Beginners</strong>, разработанным для платформы Windows
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>

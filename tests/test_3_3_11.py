@@ -1,0 +1,20 @@
+# 3_3_11 тест для задачи
+def test_3_3_11(*args):
+
+    expected = dict(
+        sorted(
+            {
+                'String.rjust': 'Расширяет строку, добавляя символы слева',
+                'String.ljust': 'Расширяет строку, добавляя символы справа',
+                'String.strip': 'Удаляет пробелы и переносы строк справа и слева',
+                'String.rstrip': 'Удаляет пробелы и переносы строк справа',
+                'String.lstrip': 'Удаляет пробелы и переносы строк слева',
+                'String.rfind': 'Возвращает индекс первого найденного вхождения при поиске справа',
+            }.items()
+        )
+    )
+
+    user_output = dict(sorted(args[0].items()))
+    print(expected)
+    print(user_output)
+    assert expected == user_output, "Нет, это неправильный ответ."

@@ -1,0 +1,22 @@
+# 3_3_1 тест для задачи
+# 0_0_0 тест для задачи
+def test_3_3_1(*args):
+
+    expected = dict(
+        sorted(
+            {
+                'String.upper': 'Возвращает строку с заглавными буквами',
+                'String.lower': 'Возвращает строку с малыми буквами',
+                'String.count': 'Определяет число вхождений подстроки в строке',
+                'String.find': 'Возвращает индекс первого найденного вхождения',
+                'String.replace': 'Заменяет указанную подстроку на новый фрагмент',
+                'String.split': 'Разбивает строку на подстроки',
+                'String.join': 'Объединяет коллекцию в строку',
+            }.items()
+        )
+    )
+
+    user_output = dict(sorted(args[0].items()))
+    print(expected)
+    print(user_output)
+    assert expected == user_output, "Нет, это неправильный ответ."

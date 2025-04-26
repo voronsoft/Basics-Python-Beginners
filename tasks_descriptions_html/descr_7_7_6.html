@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember11636" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p><strong>Подвиг 6.</strong>&nbsp;В программе объявлен следующий многомерный список:</p>
+
+                        <pre><code class="hljs language-python"><span class="hljs-attr">d</span> = [<span
+                        class="hljs-number">1</span>, <span class="hljs-number">2</span>, [<span class="hljs-literal">True</span>, <span
+                        class="hljs-literal">False</span>], [<span class="hljs-string">"Сидней"</span>, <span
+                        class="hljs-string">"Мельбурн"</span>, [<span class="hljs-number">100</span>, <span
+                        class="hljs-number">101</span>], [<span class="hljs-string">'True'</span>, [-<span
+                        class="hljs-number">2</span>, -<span class="hljs-number">1</span>]]], <span class="hljs-number">7.89</span>]</code></pre>
+
+                        <p>
+                            С помощью рекурсивной функции <strong>get_line_list </strong>необходимо на его основе создать одномерный список
+                            из значений элементов списка d. Функция должна возвращать новый созданный одномерный список.
+                        </p>
+                        <p>Только объявить со следующей сигнатурой:</p>
+                        <pre><code class="hljs language-python"><span
+                        class="hljs-keyword">def</span> <span class="hljs-title function_">get_line_list</span>(<span
+                        class="hljs-params">d,a=[]</span>): ...</code></pre>
+
+                        <p>где d - исходный список; a - новый формируемый.</p>
+                        <p class="ps-note">
+                            Вызывать функцию не нужно.
+                            Выводить на экран ничего не нужно.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <pre class="add-code-console"><code class="hljs language-python"># Вставьте этот код в консоль и дополните исходя из задания
+d = [1, 2, [True, False], ["Сидней", "Мельбурн", [100, 101], ['True', [-2, -1]]], 7.89]
+
+# здесь продолжайте программу</code></pre>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,20 @@
+# 2_2_5 тест для задачи
+def test_2_2_5(*args):
+    expected = dict(
+        sorted(
+            {
+                '%': 'остаток от деления',
+                '*': 'умножение',
+                '**': 'возведение в степень',
+                '+': 'сложение',
+                '-': 'вычитание',
+                '/': 'деление',
+                '//': 'целочисленное деление',
+            }.items()
+        )
+    )
+
+    user_output = dict(sorted(args[0].items()))
+    print(expected)
+    print(user_output)
+    assert expected == user_output, "Нет, это неправильный ответ."

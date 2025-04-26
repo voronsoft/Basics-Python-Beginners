@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember16670" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p><strong>Подвиг 2. </strong>Объявите внешнюю функцию с именем&nbsp;<b>counter_add</b> и следующей сигнатурой:</p>
+
+                        <pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span
+                        class="hljs-title function_">counter_add</span>(<span class="hljs-params">n</span>): ...</code></pre>
+
+                        <p>
+                            В функции <b>counter_add</b>, объявите вложенную функцию, которая имеет один параметр и увеличивает его значение на
+                            величину n - параметр внешней функции.&nbsp;При этом внешняя функция&nbsp;<b>counter_add</b> должна возвращать ссылку
+                            на вложенную функцию.
+                        </p>
+
+                        <p>
+                            Вызовите внешнюю функцию <b>counter_add</b> со значением аргумента 2 и результат присвойте переменной
+                            <strong>cnt</strong>. То есть, переменная <b>cnt</b> будет ссылаться на вложенную функцию. Вызовите внутреннюю функцию
+                            через переменную <b>cnt</b> со значением <b>k</b>, которое следует прочитать из входного потока командой:
+                        </p>
+
+                        <pre><code class="hljs language-python"><span
+                        class="hljs-attr">k</span> = int(input())</code></pre>
+
+                        <p>Выведите результат работы вложенной функции на экран.</p>
+
+                        <p>
+                            <strong>Тесты:</strong>&nbsp;<a
+                                href="https://github.com/selfedu-rus/test-python-base/tree/main/7/7.10.2"
+                                rel="noopener noreferrer nofollow"
+                                >https://github.com/selfedu-rus/test-python-base/tree/main/7/7.10.2</a
+                            >
+                        </p>
+                    </div>
+
+                    <div class="step-text-wrapper">
+                        <p class="step-text__limit-title">
+                            <strong>Sample Input:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">5</pre>
+                        <p class="step-text__limit-title">
+                            <strong>Sample Output:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">7</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

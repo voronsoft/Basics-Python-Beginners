@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember43706" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p>
+                            <strong>Значимый подвиг 7.</strong> В программе инициализируется двумерное игровое поле размером N x N (N -
+                            натуральное число читается из входного потока), представленное в виде вложенного списка:
+                        </p>
+
+                        <pre><code class="hljs language-python"><span class="hljs-attr">P</span> = [[<span
+                        class="hljs-number">0</span>] * N for i in range(N)]</code></pre>
+
+                        <p>
+                            Требуется расставить на поле P случайным образом M = 10 единиц (целочисленных) так, чтобы они не соприкасались
+                            друг с другом (то есть, вокруг каждой единицы должны быть нули, либо граница поля).&nbsp;
+                        </p>
+
+                        <p class="ps-note">P.S. Поле на экран выводить не нужно (вообще ничего не нужно выводить), только сформировать.</p>
+
+                        <p>
+                            <strong>Тесты:</strong>&nbsp;<a
+                                href="https://github.com/selfedu-rus/test-python-base/tree/main/10/10.3.7"
+                                rel="noopener noreferrer nofollow"
+                                >https://github.com/selfedu-rus/test-python-base/tree/main/10/10.3.7</a
+                            >
+                        </p>
+                    </div>
+
+                    <div class="step-text-wrapper">
+                        <p class="step-text__limit-title">
+                            <strong>Sample Input:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">10</pre>
+                        <p class="step-text__limit-title">
+                            <strong>Sample Output:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">True</pre>
+                    </div>
+                </div>
+            </div>
+            <pre class="add-code-console"><code class="hljs language-python"># Вставьте этот код в консоль и дополните исходя из задания
+import random
+# установка "зерна" датчика случайных чисел, чтобы получались одни и те же случайные величины
+random.seed(1)
+# начальная инициализация поля (переменные P и N не менять, единицы записывать в список P)
+N = int(input())
+P = [[0] * N for i in range(N)]
+
+# здесь продолжайте программу</code></pre>
+        </div>
+    </body>
+</html>

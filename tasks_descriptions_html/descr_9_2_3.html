@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember34980" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p>
+                            <strong>Подвиг 3.</strong> На вход программе подается натуральное число N (N &gt; 8). Необходимо его прочитать и
+                            объявить функцию-генератор, которая бы выдавала пароль длиной N символов из случайных букв, цифр и некоторых
+                            других знаков. Значение N передается в функцию-генератор первым аргументом. Для получения последовательности
+                            допустимых символов для генерации паролей в программе импортированы две строки: ascii_lowercase, ascii_uppercase
+                            (см. листинг ниже), на основе которых формируется общий список:
+                        </p>
+
+                        <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> <span
+                        class="hljs-built_in">string</span> <span class="hljs-keyword">import</span> ascii_lowercase, ascii_uppercase
+chars = ascii_lowercase + ascii_uppercase + <span class="hljs-string">"0123456789!?@#$*"</span></code></pre>
+
+                        <p>
+                            Функция-генератор должна при каждом вызове возвращать новый пароль из случайно выбранных символов chars длиной N
+                            и делать это бесконечно, то есть, вызывать ее можно бесконечное число раз.
+                        </p>
+
+                        <p>
+                            Сгенерируйте с помощью функции-генератора первые пять паролей и выведите их в столбик (каждый с новой строки).
+                        </p>
+
+                        <p>
+                            <strong>Подсказка:</strong> сгенерировать случайный индекс indx в диапазоне [a; b] для выбора символа из chars
+                            можно с помощью функции randint модуля random:
+                        </p>
+
+                        <pre><code class="hljs language-python"><span class="hljs-keyword">import</span> random
+random.<span class="hljs-built_in">seed</span>(<span class="hljs-number">1</span>)
+indx = random.<span class="hljs-built_in">randint</span>(a, b)</code></pre>
+
+                        <p>
+                            <strong>Тесты:</strong>&nbsp;<a
+                                href="https://github.com/selfedu-rus/test-python-base/tree/main/9/9.2.3"
+                                rel="noopener noreferrer nofollow"
+                                >https://github.com/selfedu-rus/test-python-base/tree/main/9/9.2.3</a
+                            >
+                        </p>
+                    </div>
+
+                    <div class="step-text-wrapper">
+                        <p class="step-text__limit-title">
+                            <strong>Sample Input:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">
+10
+</pre
+                        >
+                        <p class="step-text__limit-title">
+                            <strong>Sample Output:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">
+riGp?58WAm
+!dX3a5IDnO
+dcdbWB2d*C
+4?DSDC6Lc1
+mxLpQ@2@yM</pre
+                        >
+                    </div>
+                </div>
+            </div>
+            <pre class="add-code-console"><code class="hljs language-python"># Вставьте этот код в консоль и дополните исходя из задания
+import random
+from string import ascii_lowercase, ascii_uppercase
+
+# установка зерна датчика случайных чисел (не менять)
+random.seed(1)
+
+# здесь продолжайте программу</code></pre>
+        </div>
+    </body>
+</html>

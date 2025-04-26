@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Задача file</title>
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <!-- Подключаем локальную тему подсветки кода на питоне - "atom-one-light" -->
+        <link rel="stylesheet" href="css/atom-one-light.css" />
+        <!-- Подключаем локальный highlight.js -->
+        <script src="js/highlight.min.js"></script>
+        <!-- Подключаем поддержку Python -->
+        <script src="js/python.min.js"></script>
+        <!-- Инициализация подсветки -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                hljs.highlightAll();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="step-wrapper">
+                <div class="step-inner page-fragment">
+                    <div id="ember40848" class="html-content rich-text-viewer ember-view" data-processed="">
+                        <p><strong>Подвиг 5.</strong> Известно, что звания военнослужащих имеют следующий порядок (по возрастанию):</p>
+
+                        <p style="text-align: center">
+                            рядовой, сержант, старшина, прапорщик, лейтенант, капитан, майор, подполковник, полковник
+                        </p>
+
+                        <p>На вход программе поступают данные о военнослужащих в формате:</p>
+
+                        <p>
+                            имя_1=звание_1<br />
+                            ...<br />
+                            имя_N=звание_N
+                        </p>
+
+                        <p>&nbsp;В программе уже реализовано их считывание в список lst_in:</p>
+
+                        <pre><code class="hljs language-python">lst_in = list(<span class="hljs-name">map</span>(<span
+                        class="hljs-name">str</span>.strip, sys.stdin.readlines()))</code></pre>
+
+                        <p>Необходимо данные списка lst_in представить в виде вложенного списка вида:</p>
+
+                        <p>[['имя_1', 'звание_1'], ['имя_2', 'звание_2'], ..., ['имя_N', 'звание_N']]</p>
+
+                        <p>
+                            Этот список присвоить переменной с именем <strong>lst</strong>. Затем, отсортировать его по возрастанию
+                            званий.<br />
+                            <br>Выводить на экран ничего не нужно, только сформировать список и указать на него переменную lst.
+                        </p>
+
+                        <p>
+                            <strong>Тесты:</strong>&nbsp;<a
+                                href="https://github.com/selfedu-rus/test-python-base/tree/main/9/9.7.5"
+                                rel="noopener noreferrer nofollow"
+                                >https://github.com/selfedu-rus/test-python-base/tree/main/9/9.7.5</a
+                            >
+                        </p>
+                    </div>
+
+                    <div class="step-text-wrapper">
+                        <p class="step-text__limit-title">
+                            <strong>Sample Input:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">
+Атос=лейтенант
+Портос=прапорщик
+д'Артаньян=капитан
+Арамис=лейтенант
+Балакирев=рядовой</pre
+                        >
+                        <p class="step-text__limit-title">
+                            <strong>Sample Output:</strong>
+                        </p>
+                        <pre class="step-text__limit-value">True</pre>
+                    </div>
+                </div>
+            </div>
+
+            <pre class="add-code-console"><code class="hljs language-python"># Вставьте этот код в консоль и дополните исходя из задания
+import sys
+
+# считывание списка из входного потока (переменную lst_in не менять)
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+
+# здесь продолжайте программу (используйте список строк lst_in)</code></pre>
+        </div>
+    </body>
+</html>

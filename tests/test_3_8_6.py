@@ -1,0 +1,19 @@
+# 3_8_6 тест для задачи
+def test_3_8_6(*args):
+
+    expected = dict(
+        sorted(
+            {
+                'copy': 'Возвращает копию списка',
+                'count': 'Возвращает число элементов с указанным значением',
+                'index': 'Возвращает индекс первого найденного элемента',
+                'reverse': 'Меняет порядок следования элементов на обратный',
+                'sort': 'Сортирует элементы списка',
+            }.items()
+        )
+    )
+
+    user_output = dict(sorted(args[0].items()))
+    print(expected)
+    print(user_output)
+    assert expected == user_output, "Нет, это неправильный ответ."
