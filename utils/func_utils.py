@@ -4,6 +4,7 @@ import json
 import multiprocessing
 import os
 import socket
+import sys
 import tempfile
 
 from pathlib import Path
@@ -50,7 +51,7 @@ def get_test_func(task_name):
     # Динамически импортируем модуль с тестом
     try:
         module = importlib.import_module(module_name)
-        print(f"(get_test_func) Модуль {module_name } успешно импортирован!")
+        print(f"(get_test_func) Модуль {module_name} успешно импортирован!")
     except ImportError as e:
         print(f"(get_test_func) Ошибка импорта модуля: {e}")
         raise ImportError(f"(get_test_func) Ошибка импорта модуля: {e}")
@@ -197,10 +198,9 @@ def video_file_run(task_name):
         # Видео НЕ найдено в кеше
         dlg = wx.MessageDialog(
             None,
-            f"Не удалось найти видео: '{task_name}'\n\n"
-            f"Хотите открыть его в браузере для просмотра?",
+            f"Не удалось найти видео: '{task_name}'\n\n" f"Хотите открыть его в браузере для просмотра?",
             "Видео не найдено",
-            wx.YES_NO | wx.ICON_QUESTION
+            wx.YES_NO | wx.ICON_QUESTION,
         )
         if dlg.ShowModal() == wx.ID_YES:
             link = next((link for key, link in tasks_video_links.items() if task_name.lower() in key.lower()), None)
@@ -208,16 +208,13 @@ def video_file_run(task_name):
             if link:
                 if not wx.LaunchDefaultBrowser(link):
                     wx.MessageBox(
-                        "Не удалось открыть браузер.\n"
-                        "Проверьте настройки системы.",
+                        "Не удалось открыть браузер.\n" "Проверьте настройки системы.",
                         "Ошибка открытия браузера",
-                        wx.OK | wx.ICON_ERROR
+                        wx.OK | wx.ICON_ERROR,
                     )
             else:
                 wx.MessageBox(
-                    f"Ссылка для видео '{task_name}' не найдена!",
-                    "Ссылка отсутствует",
-                    wx.OK | wx.ICON_WARNING
+                    f"Ссылка для видео '{task_name}' не найдена!", "Ссылка отсутствует", wx.OK | wx.ICON_WARNING
                 )
         dlg.Destroy()
 
@@ -233,16 +230,39 @@ def read_json_file(file_path: Union[str, Path]) -> Dict[str, Any]:
         Dict[str, Any]: Словарь с данными из файла
 
     Исключения:
-        FileNotFoundError: Если файл не существует
+        FileNotFoundError: Если файл не найден
         json.JSONDecodeError: Если файл содержит невалидный JSON
     """
+    file_path = Path(file_path)  # Приводим к Path
+
+    if getattr(sys, 'frozen', False):
+        # Если запущено как EXE
+        exe_dir = Path(sys.executable).parent
+        alternative_path = exe_dir / "data" / file_path.name  # Используем имя файла из переданного пути
+
+        if file_path.is_file():
+            print(f"[INFO] Найден файл по переданному пути: {file_path}")
+            target_path = file_path
+        elif alternative_path.is_file():
+            print(f"[INFO] Найден файл рядом с EXE: {alternative_path}")
+            target_path = alternative_path
+        else:
+            raise FileNotFoundError(
+                f"Файл не найден ни рядом с exe ({alternative_path}), ни по переданному пути ({file_path})"
+            )
+    else:
+        # Если запущено как обычный скрипт
+        target_path = file_path  # Используем имя файла из переданного пути
+
+        if not target_path.is_file():
+            raise FileNotFoundError(f"Файл не найден в папке проекта: {target_path}")
+
+    # После того как определили верный путь, читаем файл
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(target_path, 'r', encoding='utf-8') as f:
             return json.load(f)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Файл не найден: {file_path}")
     except json.JSONDecodeError as e:
-        raise json.JSONDecodeError(f"Ошибка парсинга JSON в файле {file_path}", e.doc, e.pos)
+        raise json.JSONDecodeError(f"Ошибка парсинга JSON в файле {target_path}", e.doc, e.pos)
 
 
 def write_json_file(data: Dict[str, Any], file_path: Union[str, Path]) -> bool:
@@ -256,11 +276,39 @@ def write_json_file(data: Dict[str, Any], file_path: Union[str, Path]) -> bool:
     Возвращает:
         bool: True если запись прошла успешно, False если возникла ошибка
     """
-    try:
-        path = Path(file_path) if isinstance(file_path, str) else file_path
-        path.parent.mkdir(parents=True, exist_ok=True)
+    file_path = Path(file_path)  # Приводим к Path
 
-        with path.open('w', encoding='utf-8') as f:
+    if getattr(sys, 'frozen', False):
+        # Если запущено как EXE
+        exe_dir = Path(sys.executable).parent
+        alternative_path = exe_dir / "data" / file_path.name  # Используем имя файла из переданного пути
+
+        # 1. Проверяем файл по переданному пути
+        if file_path.is_file():
+            print(f"[INFO] Запись в файл по переданному пути: {file_path}")
+            target_path = file_path
+        # 2. Если нет, проверяем по альтернативному пути рядом с EXE
+        elif alternative_path.is_file():
+            print(f"[INFO] Запись в файл рядом с EXE: {alternative_path}")
+            target_path = alternative_path
+        # 3. Если не нашли, выбрасываем исключение
+        else:
+            raise FileNotFoundError(
+                f"Запись в файл невозможна, так как файл не был найден ни по переданному пути, ни рядом с EXE: {file_path}"
+            )
+    else:
+        # Если запущено как обычный скрипт
+        print(f"[INFO] Запись в файл по переданному пути (как скрипт): {file_path}")
+
+        # Проверяем наличие файла по переданному пути
+        if not file_path.is_file():
+            raise FileNotFoundError(f"Запись в файл невозможна, так как файл не найден по пути: {file_path}")
+
+        target_path = file_path
+
+    # Записываем данные в файл
+    try:
+        with target_path.open('w', encoding='utf-8') as f:
             json.dump(
                 data,
                 f,  # type: ignore[arg-type]
@@ -268,15 +316,17 @@ def write_json_file(data: Dict[str, Any], file_path: Union[str, Path]) -> bool:
                 ensure_ascii=False,
             )
 
+        print(f"[INFO] Данные успешно записаны в файл: {target_path}")
         return True
+
     except (OSError, IOError) as e:
-        print(f"Ошибка файловой системы: {e}")
+        print(f"[ERROR] Ошибка файловой системы: {e}")
         return False
     except TypeError as e:
-        print(f"Ошибка сериализации JSON (неподдерживаемый тип данных): {e}")
+        print(f"[ERROR] Ошибка сериализации JSON (неподдерживаемый тип данных): {e}")
         return False
     except Exception as e:
-        print(f"Неожиданная ошибка: {e}")
+        print(f"[ERROR] Неожиданная ошибка: {e}")
         return False
 
 
