@@ -50,7 +50,6 @@ class Editor(wx.Panel):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
         # Главный родитель класса
         self.top_parent = self.GetTopLevelParent()
-        # print("code_editor parent:", self.top_parent)
         top_sizer = wx.BoxSizer(wx.VERTICAL)
 
         #  Подключаем класс редактора кода для python
@@ -110,31 +109,24 @@ class Editor(wx.Panel):
                 item_text = self.top_parent.task_tree.GetItemText(selected_item)
                 # Формируем название модуля
                 module = f"tests.{(item_text.split(" ")[0]).replace("task", "test")}"
-                print("Назв модуля", module)
                 # Формируем имя тестовой функции
                 task_num_test = (item_text.split(" ")[0]).replace("task", "test")
-                print("Назв теста задачи:", task_num_test)
 
                 # 4--------Сохраняем отформатированный код пользователя во временный файл
                 task_name = item_text.split(" ")[0]
-                print("Префикс названия для временного файла:", task_name)
                 path, name = save_code_to_temp_file(code_formated, task_name)
 
                 # Динамически импортируем модуль с тестом
                 try:
                     test_module = importlib.import_module(module)
-                    print(f"Модуль {module} успешно импортирован!")
                 except ImportError as e:
-                    print(f"Ошибка импорта модуля: {e}")
                     wx.MessageBox(f"Ошибка импорта модуля:\n\n{e}", f"({item_text.split(" ")[0]}) Ошибка")
                     return
 
                 # Получаем функцию, которую нужно запустить (название как и у импортируемого модуля)
                 try:
                     test_function = getattr(test_module, task_num_test)
-                    print(f"Функция {task_num_test} найдена в модуле!\n")
                 except AttributeError as e:
-                    print(f"Функция {task_num_test} не найдена в модуле: {e}")
                     wx.MessageBox(
                         f"Функция {task_num_test} не найдена в модуле:\n\n{e}", f"({item_text.split(" ")[0]}) Ошибка"
                     )
@@ -150,7 +142,6 @@ class Editor(wx.Panel):
 
                     # Изменяем статус задачи в дереве заданий меняя стандартную иконку на иконку success.ico
                     self.top_parent.task_tree.update_task_icon(task_name)
-                    print(f"(on_run_button- {task_name}) иконка в дереве заданий изменена на success.ico")
                     wx.MessageBox(f"Правильно! Тест пройден успешно\n\n{message}", f"Task OK ! ({task_num_test})")
 
                     # Если все задачи решены выводим окно поздравления (генерация сертификата)
@@ -159,7 +150,6 @@ class Editor(wx.Panel):
                         show_wnd_certificate.ShowModal()
 
                 except Exception as e:
-                    print(str(e))
                     if isinstance(e, EOFError) or "EOF when reading a line" in str(e):
                         wx.MessageBox(f"Неверное решение...\n\nПопробуйте ещё раз.", f"Ошибка ({item_text.split(" ")[0]})")
                     else:
@@ -195,7 +185,6 @@ class Editor(wx.Panel):
                 item_text = main_frame.task_tree.GetItemText(selected_item)
                 # Формируем название(префикс) временного файла с заданием
                 task_num = item_text.split(" ")[0]
-                print("22 Назв задачи:", task_num)
 
                 # Сохраняем код пользователя во временный файл
                 file_path, file_name = save_code_to_temp_file(code_formated, task_num)
@@ -323,9 +312,7 @@ class PythonEditor(stc.StyledTextCtrl):
 
     def on_format_code_ctrl_alt_l_f(self, event):
         """Обработчик сочетания клавиш Ctrl+Alt+l or Ctrl+Alt+f для форматирования кода пользователя"""
-        print(event.GetKeyCode())
         if event.ControlDown() and event.AltDown() and event.GetKeyCode() in (76, 70):
-            print(_("Сработал обработчик форматирования кода"))
             # Получаем текст из редактора
             code = self.GetText()  # Получаем текст из редактора
 
@@ -353,43 +340,31 @@ class PythonEditor(stc.StyledTextCtrl):
         """Обрабатывает корректные отступы в коде."""
 
         text = self.GetText()  # Получаем текст в редакторе
-        print("текст текущей строки", text)
 
         # Получаем текст до курсора в текущей строке (до текущей позиции курсора)
         current_line_text = self.GetCurLine()[0]  # GetCurLine возвращает кортеж (строка, позиция курсора)
-        print("Получаем текст до курсора в текущей строке", current_line_text)
 
         # Получаем номер в строке, на которой находится курсор
         position = self.GetCurrentPos()
         line, column = self.get_line_column_from_pos(text, position)
-        print("Строка-позиция курсора:", line, ":", column)
-        print("Код кнопки", event.GetKey())
 
         # Получаем номер предыдущей строки
         prev_line = self.GetCurrentLine() - 1
-        print("Получаем номер предыдущей строки", prev_line)
         # Получаем текст предыдущей строки
         prev_line_text = self.GetLine(prev_line) if prev_line >= 0 else ""
-        print("Получаем текст предыдущей строки", prev_line_text)
 
         # Получаем количество пробелов в начале предыдущей строки.
         prev_line_indent = self.count_leading_spaces(prev_line_text)
-        print("Получаем количество пробелов в начале предыдущей строки", prev_line_indent)
-        print("------------------------")
 
         keywords = ("if ", "elif ", "else ", "for ", "while ", "def ", "class ")
         if any(word for word in keywords if word in prev_line_text) and event.GetKey() == 10:
-            print("отработал перенос самого нажатия enter")
             self.AddText("    ")  # Добавляем 4 пробела в начале строки
 
             # Обработка отступов если это вложенный блок кода
             if prev_line_indent and prev_line_text.rstrip('\r\n').endswith(":") and event.GetKey() == 10:
-                print("Блок для вложенных")
                 self.AddText(str(" " * prev_line_indent))
 
         if prev_line_indent and (not prev_line_text.rstrip('\r\n').endswith(":")) and event.GetKey() == 10:
-            print("2 Блок для вложенных")
-            print(prev_line_indent)
             self.AddText(str(" " * prev_line_indent))
 
         # Пропускаем это событие, чтобы другие обработчики могли сработать
@@ -632,7 +607,7 @@ class PythonEditor(stc.StyledTextCtrl):
 
                 # Берём последний символ перед курсором
                 last_char = text_before_cursor[-1]
-                print("Символ перед курсором", last_char)
+                print("Символ перед курсором", repr(last_char))
 
                 # Вычисляем его длину в байтах
                 char_size = len(last_char.encode("utf-8"))
@@ -644,7 +619,6 @@ class PythonEditor(stc.StyledTextCtrl):
                 if text_line.isspace():
                     # Количество пробелов перед курсором
                     spaces_count = len(text_line.rstrip('\r\n'))
-                    print("spaces_count", spaces_count)
 
                     # Определяем, есть ли остаточные пробелы
                     remainder = spaces_count % 4

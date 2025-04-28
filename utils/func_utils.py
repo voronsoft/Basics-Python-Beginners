@@ -241,10 +241,10 @@ def read_json_file(file_path: Union[str, Path]) -> Dict[str, Any]:
         alternative_path = exe_dir / "data" / file_path.name  # Используем имя файла из переданного пути
 
         if file_path.is_file():
-            print(f"[INFO] Найден файл по переданному пути: {file_path}")
+            print(f"[INFO (.exe)- по переданному пути в функцию] Найден файл по переданному пути: {file_path}")
             target_path = file_path
         elif alternative_path.is_file():
-            print(f"[INFO] Найден файл рядом с EXE: {alternative_path}")
+            print(f"[INFO (.exe)- по альтернативному пути] Найден файл рядом с EXE: {alternative_path}")
             target_path = alternative_path
         else:
             raise FileNotFoundError(
@@ -253,6 +253,7 @@ def read_json_file(file_path: Union[str, Path]) -> Dict[str, Any]:
     else:
         # Если запущено как обычный скрипт
         target_path = file_path  # Используем имя файла из переданного пути
+        print(f"[INFO (script Python)- найден в папке проекта: {file_path}")
 
         if not target_path.is_file():
             raise FileNotFoundError(f"Файл не найден в папке проекта: {target_path}")
