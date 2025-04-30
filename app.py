@@ -8,6 +8,7 @@
 ###########################################################################
 import gettext
 import multiprocessing
+import os
 import subprocess
 
 from pathlib import Path
@@ -161,7 +162,7 @@ class MainFrame(wx.Frame):
         self.right_bot_panel = wx.Panel(
             self.right_splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.BORDER_THEME | wx.TAB_TRAVERSAL
         )
-        # Сайзер для 2 bottom часть
+        # Сайзер для '2 bottom часть'
         self.bottom_sizer = wx.BoxSizer(wx.VERTICAL)
         # Редактора code-redactor --------------
         self.editor = None
@@ -263,13 +264,22 @@ class MainFrame(wx.Frame):
     def on_run_ide_thonny(self, event):
         """Обработчик запуска IDE Thonny в отдельном окне"""
         # Получаем путь к домашней директории текущего пользователя с использованием pathlib
+        # 1 Путь к директории текущего пользователя
         user_home = Path.home()
         # Строим путь к установленному Thonny
         thonny_path = user_home / 'AppData' / 'Local' / 'Programs' / 'Thonny' / 'thonny.exe'
 
-        # Проверяем, существует ли файл
+        # 2 Альтернативный путь установки.
+        system_drive = os.environ.get('SystemDrive', 'C:')  # Получаем системный диск
+        alternative_path = Path(system_drive + '\\') / 'Program Files (x86)' / 'Thonny' / 'thonny.exe'
+
+        # Проверяем, существует ли файл thonny.exe по пути
         if thonny_path.exists():
-            subprocess.Popen([str(thonny_path)])
+            print(thonny_path)
+            subprocess.Popen([str(thonny_path)])  # Запускаем Thonny с файлом
+        elif alternative_path.exists():
+            print(alternative_path)
+            subprocess.Popen([str(alternative_path)])  # Запускаем Thonny с файлом
 
         # Продолжаем обработку других событий
         event.Skip()

@@ -146,14 +146,19 @@ def delete_code_temp_file(file_path: str) -> None:
 
 def check_ide_thonny_pc():
     """Проверка есть ли на пк установленный Ide Thonny"""
-    # Получаем путь к домашней директории текущего пользователя с использованием pathlib
+    # 1 Путь к директории текущего пользователя
     user_home = Path.home()
-
     # Строим путь к установленному Thonny
     thonny_path = user_home / 'AppData' / 'Local' / 'Programs' / 'Thonny' / 'thonny.exe'
 
+    # 2 Альтернативный путь установки.
+    system_drive = os.environ.get('SystemDrive', 'C:')  # Получаем системный диск
+    alternative_path = Path(system_drive + '\\') / 'Program Files (x86)' / 'Thonny' / 'thonny.exe'
+
     # Проверяем, существует ли файл
     if thonny_path.exists():
+        return True
+    elif alternative_path.exists():
         return True
 
     return False

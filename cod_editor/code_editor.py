@@ -10,6 +10,7 @@
 import codecs
 import gettext
 import importlib
+import os
 import subprocess
 
 from pathlib import Path
@@ -23,9 +24,9 @@ from app_statistics.certificate_generation import CertificateFrame
 from utils.func_utils import (
     check_syntax,
     formated_code_pep8,
-    save_code_to_temp_file,
-    status_completed_tasks,
     run_test_function_with_timeout,
+    save_code_to_temp_file,
+    status_completed_tasks, check_ide_thonny_pc,
 )
 
 _ = gettext.gettext
@@ -68,6 +69,9 @@ class Editor(wx.Panel):
             self, wx.ID_ANY, _("Edit Task in Thonny IDE"), wx.DefaultPosition, wx.DefaultSize, 0
         )
         top_sizer.Add(self.run_btn_edit_task_in_thonny, 0, wx.ALL | wx.EXPAND, 0)
+        # Если ide Thonny не установлен на пк скрываем кнопку запуска Thonny
+        if not check_ide_thonny_pc():
+            self.run_btn_edit_task_in_thonny.Hide()
 
         self.SetSizer(top_sizer)
         self.Layout()
@@ -189,17 +193,28 @@ class Editor(wx.Panel):
                 # Сохраняем код пользователя во временный файл
                 file_path, file_name = save_code_to_temp_file(code_formated, task_num)
 
-                # Получаем путь к домашней директории текущего пользователя с использованием pathlib
+                # 1 Путь к директории текущего пользователя
                 user_home = Path.home()
                 # Строим путь к установленному Thonny
                 thonny_path = user_home / 'AppData' / 'Local' / 'Programs' / 'Thonny' / 'thonny.exe'
 
-                # Проверяем, существует ли файл
+                # 2 Альтернативный путь установки.
+                system_drive = os.environ.get('SystemDrive', 'C:')  # Получаем системный диск
+                alternative_path = Path(system_drive + '\\') / 'Program Files (x86)' / 'Thonny' / 'thonny.exe'
+
+                # Проверяем, существует ли файл thonny.exe по пути
                 if thonny_path.exists():
+                    print(thonny_path)
                     subprocess.Popen([str(thonny_path), file_path])  # Запускаем Thonny с файлом
+                elif alternative_path.exists():
+                    print(alternative_path)
+                    subprocess.Popen([str(alternative_path), file_path])  # Запускаем Thonny с файлом
                 else:
                     wx.MessageBox(
-                        "IDE Thonny не найдено на ПК\n\nЧто бы открыть задание, переустановите приложение",
+                        "IDE Thonny не найдено на ПК\n\n"
+                        "Что бы открыть задание, переустановите приложение.\n"
+                        "Установить программу в каталог по умолчанию.\n"
+                        "Скачать по адресу - https://thonny.org/",
                         "Not found - Thonny IDE ",
                     )
 
