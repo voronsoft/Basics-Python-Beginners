@@ -258,7 +258,7 @@ def read_json_file(file_path: Union[str, Path]) -> Dict[str, Any]:
     else:
         # Если запущено как обычный скрипт
         target_path = file_path  # Используем имя файла из переданного пути
-        print(f"[INFO (script Python)- найден в папке проекта: {file_path}")
+        # print(f"[INFO (script Python)- найден в папке проекта: {file_path}")
 
         if not target_path.is_file():
             raise FileNotFoundError(f"Файл не найден в папке проекта: {target_path}")

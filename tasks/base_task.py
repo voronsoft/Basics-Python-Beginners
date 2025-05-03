@@ -192,7 +192,6 @@ class BaseTask(wx.Panel):
             # Если для задания для которого создаем редактор есть предварительный код для задачи
             # подгружаем код из списка (from code_for_tasks import code_tasks)
             if self.task_file in code_tasks:
-                print(f"Предварительный код для задания найден в списке {self.task_file}")
                 # Получаем код из словаря
                 code_task = code_tasks[self.task_file]
                 # Создаём редактор передав:
