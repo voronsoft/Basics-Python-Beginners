@@ -2,6 +2,7 @@
 import importlib.util
 import sys
 
+
 def test_7_2_3(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
     # Проверяем, есть ли в коде 'def is_large('
@@ -9,7 +10,9 @@ def test_7_2_3(path_tmp_file: str, task_num_test: str):
         user_code = f.read()
 
     if "def is_large(" not in user_code:
-        raise ValueError("------------- FAIL Тест -------------\n" "В коде не найдено объявление функции 'def is_large('")
+        raise ValueError(
+            "------------- FAIL Тест -------------\n" "В коде не найдено объявление функции 'def is_large('"
+        )
 
     # Входные данные
     test_input = (

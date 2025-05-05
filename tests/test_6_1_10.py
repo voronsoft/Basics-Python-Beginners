@@ -4,7 +4,7 @@ import subprocess
 
 def test_6_1_10(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
-    # Входные данные 
+    # Входные данные
     test_input = (
         "ustanovka-i-zapusk-yazyka\nustanovka-i-poryadok-raboty-pycharm\nperemennyye-operator-prisvaivaniya-tipy-dannykh\narifmeticheskiye-operatsii\nustanovka-i-poryadok-raboty-pycharm",
         "osnovy-raboty-so-strokami\nindeksy-i-srezy-strok\nalgoritmy-obrabotki-spiskov\nosnovy-raboty-so-strokami\nalgoritm-evklida\ninstrument-list-comprehensions\nindeksy-i-srezy-strok\ndekoratory-funkciy-i-zamykaniya",

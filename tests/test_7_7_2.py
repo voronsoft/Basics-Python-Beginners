@@ -69,9 +69,11 @@ def test_7_7_2(path_tmp_file: str, task_num_test: str):
 
                     # Ищем рекурсивные вызовы в теле функции
                     for node in ast.walk(tree):
-                        if (isinstance(node, ast.Call) and
-                                isinstance(node.func, ast.Name) and
-                                node.func.id == 'get_rec_N'):
+                        if (
+                            isinstance(node, ast.Call)
+                            and isinstance(node.func, ast.Name)
+                            and node.func.id == 'get_rec_N'
+                        ):
                             is_recursive = True
                             break
 

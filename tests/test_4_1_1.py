@@ -4,7 +4,7 @@ import subprocess
 
 def test_4_1_1(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
-    # Входные данные 
+    # Входные данные
     test_input = (
         "8.7 11.0",
         "-5.5 3.7",

@@ -37,7 +37,7 @@ def test_7_6_5(path_tmp_file: str, task_num_test: str):
         sys.stdout = original_stdout
 
         # Проверяем что есть необходимые атрибуты в коде пользователя
-        attr_search = {"a":"int","b":"int", "lst": "list"}  # предполагаемый тип для lst2D
+        attr_search = {"a": "int", "b": "int", "lst": "list"}  # предполагаемый тип для lst2D
 
         for item, expected_type in attr_search.items():
             if not hasattr(user_module, item):

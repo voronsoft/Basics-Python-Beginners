@@ -93,7 +93,7 @@ def test_7_4_6(path_tmp_file: str, task_num_test: str):
 
 def test_7_4_6_1(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
-    # Входные данные 
+    # Входные данные
     test_input = (
         "Работаем с функциями",
         "Python is the best!",

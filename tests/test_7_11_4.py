@@ -35,7 +35,8 @@ def test_7_11_4(path_tmp_file: str, task_num_test: str):
             raise ValueError("ОШИБКА: Нет задекорированной функции с двумя параметрами.")
         elif len(target_funcs) > 1:
             raise ValueError(
-                f"ОШИБКА: Найдено несколько задекорированных функций с двумя параметрами: {[f[0] for f in target_funcs]}")
+                f"ОШИБКА: Найдено несколько задекорированных функций с двумя параметрами: {[f[0] for f in target_funcs]}"
+            )
         else:
             print(111, target_funcs[0][0])
             result.append(f"Функция '{target_funcs[0][0]}' найдена, задекорирована и принимает 2 параметра.")

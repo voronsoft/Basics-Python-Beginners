@@ -12,7 +12,7 @@ def test_7_1_6(path_tmp_file: str, task_num_test: str):
     if "def " not in user_code:
         raise ValueError("------------- FAIL Тест -------------\n" "В коде не найдено объявление функции 'def '")
 
-    # Входные данные 
+    # Входные данные
     test_input = (
         "8 11 5 -10 12 0",
         "1 2 3 -5 -4 0 3 7",

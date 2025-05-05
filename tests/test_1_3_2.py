@@ -24,7 +24,7 @@ def test_1_3_2(path_tmp_file: str, task_num_test: str):
         # Сравниваем результат с ожидаемым значением
         if output == expected_output:
             test_result.append(f"Получено: {output}\n")
-            
+
         else:
             raise ValueError(
                 f"------------- FAIL Тест --------\n" f"Ожидалось: {expected_output}\nно получен: {output}\n"

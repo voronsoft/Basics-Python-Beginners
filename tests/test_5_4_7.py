@@ -12,7 +12,7 @@ def test_5_4_7(path_tmp_file: str, task_num_test: str):
     if "enumerate(" not in user_code:
         raise ValueError("------------- FAIL Тест -------------\n" "Не найдено 'enumerate(' в коде.")
 
-    # Входные данные 
+    # Входные данные
     test_input = (
         "-5.67 3.5 6.89 -3.0",
         "6.78 5.68 -8.99 -4.56 1.0",

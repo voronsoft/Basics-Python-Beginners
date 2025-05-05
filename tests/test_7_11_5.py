@@ -34,7 +34,9 @@ def test_7_11_5(path_tmp_file: str, task_num_test: str):
         if not target_funcs:
             raise ValueError(f"ОШИБКА: Функция {decorated_funcs[0][0]}\nдолжна принимать всего один параметр - строку.")
         elif len(target_funcs) > 1:
-            raise ValueError(f"ОШИБКА: Найдено несколько задекорированных функций с 1 параметром: {[f[0] for f in target_funcs]}")
+            raise ValueError(
+                f"ОШИБКА: Найдено несколько задекорированных функций с 1 параметром: {[f[0] for f in target_funcs]}"
+            )
         else:
             result.append(f"Функция '{target_funcs[0][0]}' найдена, задекорирована и принимает параметры.")
 
@@ -52,7 +54,6 @@ def test_7_11_5(path_tmp_file: str, task_num_test: str):
     except Exception as e:
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
-
 
 
 def test_7_11_5_1(path_tmp_file: str, fnc_name):

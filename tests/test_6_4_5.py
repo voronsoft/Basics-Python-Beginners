@@ -4,7 +4,7 @@ import subprocess
 
 def test_6_4_5(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
-    # Входные данные 
+    # Входные данные
     test_input = (
         "Python 3.9.11 - best language!",
         "C++ v. 0.22.12",

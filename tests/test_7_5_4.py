@@ -73,7 +73,6 @@ def test_7_5_4_1(path_tmp_file: str, task_num_test: str):
         (1, 2, 3, 4, 3, 2, 4, {'tp': True}),
         (1, 2, 3, 4, 3, 2, 4, {'tp': True, 'color': 7}),
         (1, 2, 3, 4, 3, 2, 4, {'tp': False, 'color': 7, 'width': 2.0}),
-
         (5, 4, 55, 3, 4, 66, {}),
         (5, 4, 55, 3, 4, 66, {'tp': True}),
         (5, 4, 55, 3, 4, 66, {'tp': True, 'color': 7}),
@@ -85,7 +84,6 @@ def test_7_5_4_1(path_tmp_file: str, task_num_test: str):
         (19, True),
         (19, True, 7),
         (19, False, 7, 2.0),
-
         (137,),
         (137, True),
         (137, True, 7),

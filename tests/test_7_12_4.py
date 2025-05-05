@@ -133,16 +133,16 @@ def test_7_12_4_1(path_tmp_file: str):
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Ожидалось: 'Функция для формирования списка целых значений'\n"
-                    f"но получен: '{d}'\n")
+                    f"но получен: '{d}'\n"
+                )
             else:
                 test_result.append(f"__doc__ = {d}")
             # Получаем __name__
             n = get_list.__name__
             if n != 'get_list':
                 raise ValueError(
-                    f"------------- FAIL Тест: {i + 1} --------\n"
-                    f"Ожидалось: 'get_list'\n"
-                    f"но получен: {d}\n")
+                    f"------------- FAIL Тест: {i + 1} --------\n" f"Ожидалось: 'get_list'\n" f"но получен: {d}\n"
+                )
             else:
                 test_result.append(f"__name__ = {n}")
 

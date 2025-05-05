@@ -4,17 +4,15 @@ import subprocess
 
 def test_6_1_3(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
-    # Входные данные 
+    # Входные данные
     test_input = (
         "one=1 two=2 three=3",
         "you=1 we=2 they=3 us=100",
-
     )
     # Ожидаемый результат
     expected_output = (
         "('one', 1) ('three', 3) ('two', 2)",
         "('they', 3) ('us', 100) ('we', 2) ('you', 1)",
-
     )
 
     result = []  # Список для накопления результатов тестов

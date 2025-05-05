@@ -59,7 +59,7 @@ def test_7_8_4(path_tmp_file: str, task_num_test: str):
 
 def test_7_8_4_1(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
-    # Входные данные 
+    # Входные данные
     test_input = (
         "-5.6",
         "-7",

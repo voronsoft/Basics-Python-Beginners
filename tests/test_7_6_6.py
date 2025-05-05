@@ -77,7 +77,7 @@ def test_7_6_6(path_tmp_file: str, task_num_test: str):
 
 def test_7_6_6_1(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
-    # Входные данные 
+    # Входные данные
     test_input = (
         "5.8 11.0 4.3\nРим Лима Париж Сидней",
         "5.1 1.0 -1.3\nПариж Сидней",
