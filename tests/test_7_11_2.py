@@ -1,7 +1,6 @@
 # 7_11_2 тест для задачи
 import ast
 import importlib.util
-import inspect
 import sys
 
 from io import StringIO

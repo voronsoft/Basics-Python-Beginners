@@ -4,12 +4,10 @@ import importlib.util
 import sys
 
 from io import StringIO
-from typing import Callable
 
 
 def test_7_11_4(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры кода (наличие декоратора и двух параметров у декорируемой функции)"""
-    import ast
 
     result = []
 
@@ -36,7 +34,8 @@ def test_7_11_4(path_tmp_file: str, task_num_test: str):
         if not target_funcs:
             raise ValueError("ОШИБКА: Нет задекорированной функции с двумя параметрами.")
         elif len(target_funcs) > 1:
-            raise ValueError(f"ОШИБКА: Найдено несколько задекорированных функций с двумя параметрами: {[f[0] for f in target_funcs]}")
+            raise ValueError(
+                f"ОШИБКА: Найдено несколько задекорированных функций с двумя параметрами: {[f[0] for f in target_funcs]}")
         else:
             print(111, target_funcs[0][0])
             result.append(f"Функция '{target_funcs[0][0]}' найдена, задекорирована и принимает 2 параметра.")
@@ -55,7 +54,6 @@ def test_7_11_4(path_tmp_file: str, task_num_test: str):
     except Exception as e:
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
-
 
 
 def test_7_11_4_1(path_tmp_file: str, fnc_name):

@@ -4,12 +4,10 @@ import importlib.util
 import sys
 
 from io import StringIO
-from typing import Callable
 
 
 def test_7_11_5(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры кода (наличие декоратора и двух параметров у декорируемой функции)"""
-    import ast
 
     result = []
 
