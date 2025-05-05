@@ -769,7 +769,6 @@ structure_task = [
                             ("task_8_4_4 Задача", "question"),
                             ("task_8_4_5 Задача", "question"),
                             ("task_8_4_6 Задача", "question"),
-                            ("task_8_4_7 Задача", "question"),
                         ],
                     ),
                     (
@@ -1446,7 +1445,6 @@ lst_task_type = {
     'task_8_4_4.py': 'question',
     'task_8_4_5.py': 'question',
     'task_8_4_6.py': 'question',
-    'task_8_4_7.py': 'question',
     'task_8_5_1.py': 'question',
     'task_8_5_2.py': 'question',
     'task_8_5_3.py': 'question',
