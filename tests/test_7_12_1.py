@@ -111,9 +111,6 @@ def test_7_12_1_1(path_tmp_file: str, fnc_name, dec_name):
             test_result.append(f"Входные данные: {test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
-            # Восстанавливаем оригинальный stdout
-            sys.stdout = original_stdout
-
             func = getattr(user_module, fnc_name)  # Получаем функцию из модуля
             # Выполняем функцию
             data = test_input[i]
