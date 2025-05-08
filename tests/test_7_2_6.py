@@ -1,8 +1,8 @@
 # 7_2_6 тест для задачи
 import importlib.util
+import inspect
 import io
 import sys
-import inspect
 
 
 def test_7_2_6(path_tmp_file: str, task_num_test: str):

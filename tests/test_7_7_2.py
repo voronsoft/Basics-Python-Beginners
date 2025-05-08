@@ -1,6 +1,6 @@
 # 7_7_2 тест для задачи
-import importlib.util
 import ast
+import importlib.util
 import inspect
 import sys
 

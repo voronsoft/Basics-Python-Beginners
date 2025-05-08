@@ -40,11 +40,7 @@ def test_8_1_6(path_tmp_file: str, task_num_test: str):
                 if isinstance(node, ast.Call):
                     # Проверка seed(10)
                     if isinstance(node.func, ast.Name) and node.func.id == "seed":
-                        if (
-                            len(node.args) == 1 and
-                            isinstance(node.args[0], ast.Constant) and
-                            node.args[0].value == 10
-                        ):
+                        if len(node.args) == 1 and isinstance(node.args[0], ast.Constant) and node.args[0].value == 10:
                             seed_call_found = True
 
                     # Проверка print(round(rnd(), 2))
@@ -54,12 +50,12 @@ def test_8_1_6(path_tmp_file: str, task_num_test: str):
                             if isinstance(arg, ast.Call) and isinstance(arg.func, ast.Name) and arg.func.id == "round":
                                 # Проверяем аргументы round(...)
                                 if (
-                                    len(arg.args) == 2 and
-                                    isinstance(arg.args[0], ast.Call) and
-                                    isinstance(arg.args[0].func, ast.Name) and
-                                    arg.args[0].func.id == "rnd" and
-                                    isinstance(arg.args[1], ast.Constant) and
-                                    arg.args[1].value == 2
+                                    len(arg.args) == 2
+                                    and isinstance(arg.args[0], ast.Call)
+                                    and isinstance(arg.args[0].func, ast.Name)
+                                    and arg.args[0].func.id == "rnd"
+                                    and isinstance(arg.args[1], ast.Constant)
+                                    and arg.args[1].value == 2
                                 ):
                                     print_round_rnd_found = True
 
@@ -88,7 +84,6 @@ def test_8_1_6(path_tmp_file: str, task_num_test: str):
         error_info = "\n".join(result) + f"\n{e}"
         print(error_info)
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
-
 
 
 def test_8_1_6_1(path_tmp_file: str):

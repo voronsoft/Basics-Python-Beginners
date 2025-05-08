@@ -70,7 +70,9 @@ def test_9_1_7_1(path_tmp_file: str):
     # Входные данные
     test_input = ('abcdefghijklmnopqrstuvwxyz',)
     # Ожидаемый результат
-    expected_output = ("aa ab ac ad ae af ag ah ai aj ak al am an ao ap aq ar as at au av aw ax ay az ba bb bc bd be bf bg bh bi bj bk bl bm bn bo bp bq br bs bt bu bv bw bx", )
+    expected_output = (
+        "aa ab ac ad ae af ag ah ai aj ak al am an ao ap aq ar as at au av aw ax ay az ba bb bc bd be bf bg bh bi bj bk bl bm bn bo bp bq br bs bt bu bv bw bx",
+    )
 
     result = []  # Список для накопления результатов тестов
 

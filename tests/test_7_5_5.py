@@ -1,6 +1,7 @@
 # 7_5_5 тест для задачи
 import importlib.util
 import sys
+
 from io import StringIO
 
 

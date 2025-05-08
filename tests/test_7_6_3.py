@@ -1,6 +1,6 @@
 # 7_6_3 тест для задачи
-import subprocess
 import ast
+import subprocess
 
 
 def test_7_6_3(path_tmp_file: str, task_num_test: str):
