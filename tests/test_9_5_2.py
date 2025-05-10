@@ -100,7 +100,7 @@ def test_9_5_2_1(path_tmp_file: str):
             if captured_output == expected_output[i]:
                 test_result.append(f"Получено:\n{captured_output}\n")
             else:
-                test_result.append(
+                raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Входные данные:\n{test_input[i]}\n"
                     f"Ожидалось:\n{expected_output[i]}\nно получено:\n{captured_output}\n"

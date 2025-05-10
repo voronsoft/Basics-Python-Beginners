@@ -39,7 +39,7 @@ def test_9_5_5(path_tmp_file: str, task_num_test: str):
         if not zip_used:
             raise ValueError("ОШИБКА: В коде не найден вызов функции zip.")
         if not lst_used:
-            raise ValueError("ОШИБКА: В коде не найден вызов функции lst.")
+            raise ValueError("ОШИБКА: В коде не найден lst.")
 
         result.append("Найден вызов функции zip()")
         result.append("Найдена переменная lst")
@@ -111,7 +111,7 @@ def test_9_5_5_1(path_tmp_file: str):
             if lst_user_code == expected_output[i]:
                 test_result.append(f"Получено:\n{lst_user_code}\n")
             else:
-                test_result.append(
+                raise RuntimeError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Входные данные: {test_input[i]}\n"
                     f"Ожидалось:\n{expected_output[i]}\nно получено:\n{lst_user_code}\n"

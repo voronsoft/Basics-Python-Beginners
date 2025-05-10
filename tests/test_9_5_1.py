@@ -27,7 +27,7 @@ def test_9_5_1(path_tmp_file: str, task_num_test: str):
 
         # Проход по дереву AST
         for node in ast.walk(tree):
-            # Проверка на вызовы функций (zip, zip, map)
+            # Проверка на вызовы функций (zip, next, map)
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
                 if node.func.id == 'zip':
                     zip_used = True
@@ -112,7 +112,7 @@ def test_9_5_1_1(path_tmp_file: str):
             if captured_output == expected_output[i]:
                 test_result.append(f"Получено: {captured_output}\n")
             else:
-                test_result.append(
+                raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Входные данные:\n{test_input[i]}\n"
                     f"Ожидалось: {expected_output[i]}\nно получено: {captured_output}\n"
