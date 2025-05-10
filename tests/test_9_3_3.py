@@ -94,7 +94,7 @@ def test_9_3_3_1(path_tmp_file: str):
     try:
         for i in range(len(test_input)):
             # Импортируем модуль из файла
-            spec = importlib.util.spec_from_file_location("module.name", path_tmp_file)
+            spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
             # Подмена stdin (ввод)

@@ -71,7 +71,7 @@ def test_8_1_4_1(path_tmp_file: str):
     try:
         for i in range(len(test_input)):
             # Импортируем модуль пользователя
-            spec = importlib.util.spec_from_file_location("module.name", path_tmp_file)
+            spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(user_module)
 

@@ -91,7 +91,7 @@ def test_8_1_5_1(path_tmp_file: str):
         i = 0  # Один тест, без входных данных
 
         # Импортируем модуль пользователя
-        spec = importlib.util.spec_from_file_location("module.name", path_tmp_file)
+        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
 
         # Сохраняем оригинальный stdin
