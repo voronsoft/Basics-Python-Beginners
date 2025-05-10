@@ -53,14 +53,14 @@ def test_9_4_5(path_tmp_file: str, task_num_test: str):
 
 def test_9_4_5_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
-    # Два набора входных данных
+    # Входные данные
     test_input = (
         "abc@it.ru dfd3.ru@mail biba123@list.ru sc_lib@list.ru $fg9@fd.com",
         "sc_lib@list.ru abc34@it.com &dfd3.ru@mail biba123.ru@list",
         "тест_почта@mail.ru test_post@mail.ru test_post@мэил.ру",
     )
 
-    # Два соответствующих ожидаемых вывода
+    # Ожидаемые данные вывода
     expected_output = (
         "abc@it.ru biba123@list.ru sc_lib@list.ru",
         "sc_lib@list.ru abc34@it.com",
