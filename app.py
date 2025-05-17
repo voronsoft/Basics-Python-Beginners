@@ -21,14 +21,17 @@ import wx.xrc
 
 from app_ai_window import AiWindow
 from app_statistics.app_statistics import StatisticsDialog
+from app_statistics.certificate_generation import CertificateFrame
 from clear_status.clear_status_task import ClearStatusTask
 from config import IMAGES_PATH, JSON_COMPLETED_TASKS
+from task_tree.task_structure import lst_task_type
 from task_tree.task_tree import TaskTree
 from tasks.welcome import WelcomePage
 from utils.func_utils import (
     check_connect_internet,
     check_ide_thonny_pc,
     get_class,
+    status_completed_tasks,
     video_file_run,
     write_json_file,
 )
@@ -122,6 +125,19 @@ class MainFrame(wx.Frame):
             self.left_panel, wx.ID_ANY, _("Статистика прогресса"), wx.DefaultPosition, wx.DefaultSize, 0
         )
         left_sizer.Add(self.show_statistics, 0, wx.ALL | wx.EXPAND, 7)
+
+        self.show_certificate_btn = wx.Button(
+            self.left_panel, wx.ID_ANY, _("Сертификат"), wx.DefaultPosition, wx.DefaultSize, 0
+        )
+        # Задаем фон кнопке
+        self.show_certificate_btn.SetBackgroundColour(wx.Colour(144, 238, 144))
+
+        left_sizer.Add(self.show_certificate_btn, 0, wx.ALL | wx.EXPAND, 7)
+        # Скрываем кнопку - Сертификат
+        self.show_certificate_btn.Hide()
+        # Если все задания не решены в курсе скрываем кнопку - Сертификат
+        if status_completed_tasks() or len(self.task_tree.task_status) == len(lst_task_type):
+            self.show_certificate_btn.Show()
         # ------------ END -----------
         self.left_panel.SetSizer(left_sizer)
         self.left_panel.Layout()
@@ -221,6 +237,8 @@ class MainFrame(wx.Frame):
         self.clear_status_tasks.Bind(wx.EVT_BUTTON, self.on_clear_status_tasks)
         # Событие отображения статистики
         self.show_statistics.Bind(wx.EVT_BUTTON, self.on_show_statistics)
+        # Событие отображения сертификата
+        self.show_certificate_btn.Bind(wx.EVT_BUTTON, self.on_show_certificate)
         # Обработчик события закрытия окна
         self.Bind(wx.EVT_CLOSE, self.on_close)
         # END ---------------------------------------------
@@ -305,6 +323,11 @@ class MainFrame(wx.Frame):
             # Если окно еще не создано, создаем и показываем
             self.statistics_window = StatisticsDialog(self)
             self.statistics_window.ShowModal()
+
+    def on_show_certificate(self, event):
+        """Обработчик запуска окна генерации сертификата"""
+        show_wnd_certificate = CertificateFrame(self)
+        show_wnd_certificate.ShowModal()
 
     def processing_selected_item(self, name_task):
         """Обрабатывает запуск файла выбранный из дерева заданий"""
@@ -437,14 +460,6 @@ if __name__ == "__main__":
 
     # Запуск основного приложения
     main()
-# TODO [1]
-#  В тестах нужно добавить защиту против зависания программы (основного потока).
-#  Защиту от передачи в input() входных данных в тех тестах где идет импорт кода пользователя как модуль.
-#  Если в таком месте будет не предусмотренный перехват входного потока stdin программа зависнет в ожидании ввода!!!!
-#  Реализовать защиту или глобально на уровне программы или локально для определенных тестов.
-#  Пример как зависает программа в задании task_7_5_3 в редакторе вводим input() программа зависнет в ожидании ввода..
-
 # TODO [2]
 #  Реализовать удаление временных файлов с кодом пользователя из папки Temp ос
 #  после удачного выполнения задачи/задания
-

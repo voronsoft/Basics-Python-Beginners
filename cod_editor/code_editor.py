@@ -21,12 +21,14 @@ import wx.stc as stc
 import wx.xrc
 
 from app_statistics.certificate_generation import CertificateFrame
+from task_tree.task_structure import lst_task_type
 from utils.func_utils import (
+    check_ide_thonny_pc,
     check_syntax,
     formated_code_pep8,
     run_test_function_with_timeout,
     save_code_to_temp_file,
-    status_completed_tasks, check_ide_thonny_pc,
+    status_completed_tasks,
 )
 
 _ = gettext.gettext
@@ -51,6 +53,8 @@ class Editor(wx.Panel):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
         # Главный родитель класса
         self.top_parent = self.GetTopLevelParent()
+        # переменная со списком задач и метками типа задачи
+        self.lst_tasks_type = lst_task_type
         top_sizer = wx.BoxSizer(wx.VERTICAL)
 
         #  Подключаем класс редактора кода для python
@@ -149,7 +153,7 @@ class Editor(wx.Panel):
                     wx.MessageBox(f"Правильно! Тест пройден успешно\n\n{message}", f"Task OK ! ({task_num_test})")
 
                     # Если все задачи решены выводим окно поздравления (генерация сертификата)
-                    if status_completed_tasks():
+                    if status_completed_tasks() or len(self.top_parent.task_tree.task_status) == len(self.lst_tasks_type):
                         show_wnd_certificate = CertificateFrame(None)
                         show_wnd_certificate.ShowModal()
 

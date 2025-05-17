@@ -15,11 +15,11 @@ import wx.html2
 import wx.xrc
 
 from cod_editor.code_editor import Editor
-from config import TASKS_DESCR_HTML_PATH, VIDEO_PATH_DTL_SOL
+from config import TASKS_DESCR_HTML_PATH, VIDEO_PATH_DTL_SOL, JSON_COMPLETED_TASKS
 from app_statistics.certificate_generation import CertificateFrame
 from task_tree.code_for_tasks import code_tasks
 from task_tree.task_structure import lst_task_type
-from utils.func_utils import get_test_func, status_completed_tasks
+from utils.func_utils import get_test_func, status_completed_tasks, write_json_file
 
 _ = gettext.gettext
 
@@ -169,7 +169,7 @@ class BaseTask(wx.Panel):
             wx.MessageBox("Отлично! Тест пройден успешно", f"{test_name} Результат")
 
             # Если все задачи решены выводим окно поздравления (генерация сертификата)
-            if status_completed_tasks():
+            if status_completed_tasks() or len(self.top_parent.task_tree.task_status) == len(self.lst_tasks_type):
                 show_wnd_certificate = CertificateFrame(None)
                 show_wnd_certificate.ShowModal()
 

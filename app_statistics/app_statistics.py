@@ -37,8 +37,7 @@ class StatisticsDialog(wx.Dialog):
         # Данные
         self.total_tasks = len(lst_task_type)
         # Считываем словарь решённых заданий
-        self.solved_tasks = len(self.GetParent().task_tree.task_status) # len(read_json_file(JSON_COMPLETED_TASKS))
-        print("Родитель окна статистики", self.GetParent())
+        self.solved_tasks = len(self.GetParent().task_tree.task_status)
         self.progress = (self.solved_tasks / self.total_tasks) * 100 if self.total_tasks > 0 else 0
 
         # Цвета
