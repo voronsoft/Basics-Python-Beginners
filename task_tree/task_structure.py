@@ -1069,7 +1069,7 @@ structure_task = [
     )
 ]
 
-# Список всех задач со значением по типу задания check/file/code
+# Список всех задач со значением по типу задания question/file/code
 lst_task_type = {
     'task_1_3_1.py': 'file',
     'task_1_3_2.py': 'file',
