@@ -5,7 +5,6 @@ __pycache__/
 installer_files/Output/
 build/
 dist/
-/data/
 installer_files/
 # Игнорировать .mp4 везде
 *.mp4
