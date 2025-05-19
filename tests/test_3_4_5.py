@@ -1,5 +1,6 @@
 # 3_4_5 тест для задачи
 import subprocess
+import sys
 
 
 def test_3_4_5(path_tmp_file: str, task_num_test: str):
@@ -34,6 +35,7 @@ def test_3_4_5(path_tmp_file: str, task_num_test: str):
                 input=test_input[i],
                 text=True,
                 capture_output=True,
+                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
                 encoding="utf-8",
             )
 

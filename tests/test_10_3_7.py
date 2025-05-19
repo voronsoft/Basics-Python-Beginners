@@ -47,6 +47,7 @@ def test_10_3_7_1(path_tmp_file: str):
 
     import importlib.util
     import sys
+
     from io import StringIO
 
     # Входные данные
