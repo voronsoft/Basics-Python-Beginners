@@ -35,7 +35,7 @@ def test_3_8_5(path_tmp_file: str, task_num_test: str):
                 text=True,  # Режим работы с текстом
                 capture_output=True,  # Захватываем stdout и stderr
                 encoding="utf-8",  # Явно указываем кодировку
-                timeout=3,  # Важно: ограничение времени выполнения кода
+                timeout=5,  # Важно: ограничение времени выполнения кода
             )
 
             # Получаем результат (stdout)

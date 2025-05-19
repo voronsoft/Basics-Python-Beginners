@@ -1,5 +1,6 @@
 # 1_3_2 тест для задачи
 import subprocess
+import sys
 
 
 def test_1_3_2(path_tmp_file: str, task_num_test: str):
@@ -13,6 +14,7 @@ def test_1_3_2(path_tmp_file: str, task_num_test: str):
             ["python", "-I", "-E", "-X", "utf8", path_tmp_file],
             text=True,
             capture_output=True,
+            creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
         )
 
         # Получаем результат (stdout)

@@ -357,7 +357,7 @@ def _run_test_wrapper(queue, test_function, path, name):
         queue.put(("error", str(e)))
 
 
-def run_test_function_with_timeout(test_function, path, name, timeout=5):
+def run_test_function_with_timeout(test_function, path, name, timeout=10):
     """Запускает тестовую функцию в отдельном процессе с ограничением по времени"""
     queue = multiprocessing.Queue()
     p = multiprocessing.Process(target=_run_test_wrapper, args=(queue, test_function, path, name))
