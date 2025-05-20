@@ -98,7 +98,6 @@ def test_9_8_3_1(path_tmp_file: str):
             get_sum = getattr(user_module, "get_sum")
             # Выполняем
             answer = get_sum(test_input[i])
-            print("lst", answer)
 
             # Формируем отчет по тесту
             test_result = []

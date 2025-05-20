@@ -141,7 +141,6 @@ def test_9_7_2_1(path_tmp_file: str, dict_name: str):
 
             # Получаем из модуля словарь
             user_dict = getattr(user_module, dict_name)
-            print("user_dict", user_dict)
 
             # Формируем отчет по тесту
             test_result = []

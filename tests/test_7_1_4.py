@@ -8,7 +8,6 @@ def test_7_1_4(path_tmp_file: str, task_num_test: str):
     # Проверяем, есть ли в коде 'def '
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
-        print(user_code)
 
     if "def " not in user_code:
         raise ValueError("------------- FAIL Тест -------------\n" "В коде не найдено объявление функции 'def '")

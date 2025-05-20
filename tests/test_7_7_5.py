@@ -134,7 +134,6 @@ def test_7_7_5_1(path_tmp_file: str, task_num_test: str):
             user_func = getattr(user_module, 'fact_rec')
             # Выполняем функцию
             output = user_func(int(test_input[i]))
-            print("11output:", output, type(output))
 
             if output == expected_output[i]:
                 test_result.append(f"Получено:\n{output}\n")

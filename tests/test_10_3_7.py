@@ -129,8 +129,6 @@ def check_field(P, M = 10):
                         if 0 <= ni < N and 0 <= nj < N and P[ni][nj] == 1:
                             return False, f"Единицы касаются: ({i},{j}) и ({ni},{nj})"
 
-    print(count_ones, repr(count_ones))
-    print(M, repr(M))
     if count_ones != M:
         return False, f"Ожидалось {M} единиц, но найдено: {count_ones}"
 

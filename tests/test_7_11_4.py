@@ -38,7 +38,6 @@ def test_7_11_4(path_tmp_file: str, task_num_test: str):
                 f"ОШИБКА: Найдено несколько задекорированных функций с двумя параметрами: {[f[0] for f in target_funcs]}"
             )
         else:
-            # print(111, target_funcs[0][0])
             result.append(f"Функция '{target_funcs[0][0]}' найдена, задекорирована и принимает 2 параметра.")
 
         result.append("--------------OK structure -------------\n")
@@ -106,7 +105,6 @@ def test_7_11_4_1(path_tmp_file: str, fnc_name):
             func = getattr(user_module, fnc_name)  # Получаем функцию из модуля
             # Выполняем функцию
             a, b = test_input[i].split("\n")
-            # print(a, b)
             func(a, b)
             # Получаем перехваченный вывод из print()
             captured_output = output_buffer.getvalue().rstrip()

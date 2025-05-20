@@ -98,7 +98,6 @@ def test_9_8_2_1(path_tmp_file: str):
             get_add = getattr(user_module, "get_add")
             # Выполняем
             answer = get_add(*test_input[i])
-            print("lst", answer)
 
             # Формируем отчет по тесту
             test_result = []

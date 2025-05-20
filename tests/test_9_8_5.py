@@ -98,7 +98,6 @@ def test_9_8_5_1(path_tmp_file: str):
             get_list_dig = getattr(user_module, "get_list_dig")
             # Выполняем
             answer = get_list_dig(test_input[i])
-            print("lst", answer)
 
             # Формируем отчет по тесту
             test_result = []

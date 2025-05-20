@@ -18,7 +18,6 @@ def test_2_4_1(path_tmp_file: str, task_num_test: str):
 
         # Получаем результат (stdout)
         output = process.stdout.strip("\n")
-        print(repr(output))
 
         # Формируем вывод теста
         test_result = list()

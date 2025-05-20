@@ -49,8 +49,7 @@ def test_9_3_4(path_tmp_file: str, generator_funcs: str):
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
             tp = getattr(user_module, "tp")  # Получаем функцию из модуля
-            # Выполняем функцию, что бы получить первые 5ть результатов для проверки
-            print("tp", tp)
+            # Выполняем функцию, что бы получить первые 5ть результатов для проверки.
             # Проверяем результат
             if tp == expected_output[i]:
                 test_result.append(f"Получено: {tp}\n")

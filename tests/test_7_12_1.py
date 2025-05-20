@@ -98,10 +98,16 @@ def test_7_12_1_1(path_tmp_file: str, fnc_name, dec_name):
 
             # Создаем буфер для перехвата вывода
             output_buffer = StringIO()
+            # Создаем буфер для перехвата ошибок
+            error_buffer = StringIO()
             # Сохраняем оригинальный stdout
             original_stdout = sys.stdout
+            # Сохраняем оригинальный stderr
+            original_stderr = sys.stderr
             # Перенаправляем stdout в буфер
             sys.stdout = output_buffer
+            # Перенаправляем stderr в буфер
+            sys.stderr = error_buffer
 
             spec.loader.exec_module(user_module)
 

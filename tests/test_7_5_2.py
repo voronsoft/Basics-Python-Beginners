@@ -32,7 +32,6 @@ def test_7_5_2(path_tmp_file: str, task_num_test: str):
         # --- Проверка параметров функции ---
         sig = inspect.signature(func)
         params = sig.parameters
-        print("1212", params)
 
         # --- Проверяем наличие параметра *args или подобный
         var_positional_params = [name for name, p in params.items() if p.kind == inspect.Parameter.VAR_POSITIONAL]

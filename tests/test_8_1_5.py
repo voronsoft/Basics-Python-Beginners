@@ -39,7 +39,6 @@ def test_8_1_5(path_tmp_file: str, task_num_test: str):
                         if len(node.args) == 1 and isinstance(node.args[0], ast.Constant) and node.args[0].value == 1:
                             seed_call_found = True
 
-                    # print(randint(...))
                     if isinstance(node.func, ast.Name) and node.func.id == "print":
                         if len(node.args) == 1 and isinstance(node.args[0], ast.Call):
                             inner = node.args[0]
@@ -75,7 +74,6 @@ def test_8_1_5(path_tmp_file: str, task_num_test: str):
 
     except Exception as e:
         error_info = "\n".join(result) + f"\n{e}"
-        print(error_info)
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
 
 

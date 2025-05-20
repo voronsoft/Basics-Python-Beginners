@@ -45,7 +45,6 @@ def test_2_4_12(path_tmp_file: str, task_num_test: str):
             if error:  # Если есть ошибки в коде выводим
                 raise ValueError(error)
 
-            print("12313131", output)
             test_result = list()
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
             test_result.append(f"Входные данные: {test_input[i]}")

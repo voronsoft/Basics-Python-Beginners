@@ -120,9 +120,6 @@ def test_7_9_3_1(path_tmp_file: str, task_num_test: str):
             # Получаем перехваченный вывод
             captured_output = output_buffer.getvalue().rstrip()
 
-            print("captured_output", repr(captured_output), type(captured_output))
-            print(f"expected_output[{i}]", repr(expected_output[i]), type(expected_output[i]))
-
             if captured_output == expected_output[i]:
                 test_result.append(f"Получено: {captured_output}\n")
             else:

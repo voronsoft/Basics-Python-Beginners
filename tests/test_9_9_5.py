@@ -99,7 +99,6 @@ def test_9_9_5_1(path_tmp_file: str):
             is_free = getattr(user_module, "is_free")
             # Выполняем
             answer = is_free(test_input[i])
-            print("answer", answer)
 
             # Формируем отчет по тесту
             test_result = []

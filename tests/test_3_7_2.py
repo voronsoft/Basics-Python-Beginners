@@ -7,7 +7,6 @@ def test_3_7_2(path_tmp_file: str, task_num_test: str):
     # Проверяем, содержит ли код список из задачи v = [1205, 1101, 1434, 1320, 923, 874]
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
-        print(5644, user_code)
 
     string = 'v = [1205, 1101, 1434, 1320, 923, 874]'
     fail_string = 'print([1434, 1320, 923, 874])'

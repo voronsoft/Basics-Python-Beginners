@@ -8,7 +8,6 @@ def test_3_4_5(path_tmp_file: str, task_num_test: str):
     # Проверяем, есть ли в коде raw-строка (r", r', r''', r""")
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
-        print(user_code)
 
     # Проверяем, содержит ли код хотя бы одну raw-строку вида:
     raw_string_prefixes = ('r"', "r'", 'r"""', "r'''")

@@ -101,7 +101,6 @@ def test_9_7_4_1(path_tmp_file: str):
 
             # Получаем из модуля кортеж
             user_tuple = getattr(user_module, "t_sorted")
-            # print("user_tuple", user_tuple)
 
             # Формируем отчет по тесту
             test_result = []

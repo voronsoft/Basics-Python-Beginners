@@ -122,7 +122,6 @@ def test_9_2_4_1(path_tmp_file: str, generator_funcs: str):
             funcs = getattr(user_module, generator_funcs)  # Получаем функцию из модуля
             # Выполняем функцию, что бы получить первые 5ть результатов для проверки
             answer = tuple(next(funcs(5)) for _ in range(5))
-            print("answer", answer)
             # Проверяем результат
             if captured_output == expected_output[i]:
                 test_result.append(f"Получено:\n{captured_output}\n")

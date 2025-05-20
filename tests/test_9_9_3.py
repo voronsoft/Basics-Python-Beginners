@@ -115,7 +115,6 @@ def test_9_9_3_1(path_tmp_file: str):
             is_string = getattr(user_module, "is_string")
             # Выполняем
             answer = is_string(test_input[i])
-            print("answer", answer)
 
             # Формируем отчет по тесту
             test_result = []

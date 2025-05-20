@@ -44,8 +44,6 @@ def test_6_5_4(path_tmp_file: str, task_num_test: str):
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
             # Сравниваем результат с ожидаемым значением
-            print("output", output)
-            print("expected_output", expected_output[i])
             if output == expected_output[i]:
                 test_result.append(f"Получено: {output}\n")
 

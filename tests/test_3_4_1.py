@@ -16,6 +16,5 @@ def test_3_4_1(*args):
     )
 
     user_output = dict(sorted(args[0].items()))
-    print(expected)
-    print(user_output)
+
     assert expected == user_output, "Нет, это неправильный ответ."

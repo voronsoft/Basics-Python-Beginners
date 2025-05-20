@@ -49,7 +49,6 @@ def test_7_4_3(path_tmp_file: str, task_num_test: str):
 
         # Проверяем, что chars имеет значение по умолчанию "$%!?@#"
         chars_param = params["chars"]
-        print("chars_param.default:", chars_param.default)
         if chars_param.default != '$%!?@#':
             raise ValueError("Параметр 'chars' должен иметь значение по умолчанию '$%!?@#'")
 

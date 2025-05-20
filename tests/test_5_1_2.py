@@ -66,7 +66,6 @@ def test_5_1_2(path_tmp_file: str, task_num_test: str):
         # Проверяем, есть ли в коде 'while '
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             user_code = f.read()
-            print(user_code)
 
         # Проверяем, содержит ли код хотя бы одну raw-строку вида:
         string_prefixes = 'while '
