@@ -11,6 +11,9 @@ def test_7_10_4(path_tmp_file: str, task_num_test: str):
 
     original_stdin = sys.stdin
     original_stdout = sys.stdout
+    # Заглушка для sys.stderr
+    original_stderr = sys.stderr  # сохраняем оригинал
+    sys.stderr = StringIO()  # подменяем на буфер
     sys.stdin = StringIO("div\nПроверка")
     sys.stdout = StringIO()
 
@@ -122,6 +125,9 @@ def test_7_10_4_1(path_tmp_file: str, outer_func):
 
             # Подменяем stdin с тестовыми данными
             sys.stdin = StringIO(test_input[i])
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = StringIO()  # подменяем на буфер
 
             # Создаем буфер для перехвата вывода
             output_buffer = StringIO()

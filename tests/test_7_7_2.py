@@ -16,6 +16,9 @@ def test_7_7_2(path_tmp_file: str, task_num_test: str):
     # Подменяем stdin на фейковый с тестовыми данными
     test_input = "55"
     sys.stdin = StringIO(test_input)
+    # Заглушка для sys.stderr
+    original_stderr = sys.stderr  # сохраняем оригинал
+    sys.stderr = StringIO()  # подменяем на буфер
 
     # Перенаправляем stdout, чтобы не засорять вывод тестов
     sys.stdout = StringIO()
@@ -115,6 +118,10 @@ def test_7_7_2_1(path_tmp_file: str, task_num_test: str):
 
             # Подменяем stdin с тестовыми данными
             sys.stdin = StringIO(test_input[i])
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = StringIO()  # подменяем на буфер
+
             spec.loader.exec_module(user_module)
 
             # Создаем буфер для перехвата вывода

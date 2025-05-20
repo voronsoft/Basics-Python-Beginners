@@ -11,6 +11,9 @@ def test_7_10_5(path_tmp_file: str, task_num_test: str):
 
     original_stdin = sys.stdin
     original_stdout = sys.stdout
+    # Заглушка для sys.stderr
+    original_stderr = sys.stderr  # сохраняем оригинал
+    sys.stderr = StringIO()  # подменяем на буфер
     sys.stdin = StringIO("list\n-5 6 8 11 0 111 -456 3")
     sys.stdout = StringIO()
 
@@ -122,6 +125,9 @@ def test_7_10_5_1(path_tmp_file: str, outer_func):
 
             # Подменяем stdin с тестовыми данными
             sys.stdin = StringIO(test_input[i])
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = StringIO()  # подменяем на буфер
 
             # Создаем буфер для перехвата вывода
             output_buffer = StringIO()

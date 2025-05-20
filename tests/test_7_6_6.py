@@ -19,6 +19,9 @@ def test_7_6_6(path_tmp_file: str, task_num_test: str):
     # Подменяем stdin на фейковый с тестовыми данными
     test_input = "5.8 11.0 4.3\nРим Лима Париж Сидней"
     sys.stdin = StringIO(test_input)
+    # Заглушка для sys.stderr
+    original_stderr = sys.stderr  # сохраняем оригинал
+    sys.stderr = StringIO()  # подменяем на буфер
 
     # Перенаправляем stdout, чтобы не засорять вывод тестов
     sys.stdout = StringIO()

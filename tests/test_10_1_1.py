@@ -60,6 +60,9 @@ def test_10_1_1_1(path_tmp_file: str):
 
             # Подменяем stdin (заглушка)
             sys.stdin = StringIO('')
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = StringIO()  # подменяем на буфер
 
             # Выполняем пользовательский модуль
             spec.loader.exec_module(user_module)

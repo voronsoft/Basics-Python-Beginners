@@ -107,6 +107,9 @@ def test_8_1_6_1(path_tmp_file: str):
 
         # Подменяем ввод и вывод
         sys.stdin = StringIO("")
+        # Заглушка для sys.stderr
+        original_stderr = sys.stderr  # сохраняем оригинал
+        sys.stderr = StringIO()  # подменяем на буфер
         output_buffer = StringIO()
         sys.stdout = output_buffer
 

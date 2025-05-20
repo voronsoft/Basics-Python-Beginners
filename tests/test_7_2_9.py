@@ -35,6 +35,9 @@ def test_7_2_9(path_tmp_file: str, task_num_test: str):
 
             # Имитируем ввод и выполняем код, перехватывая вывод
             sys.stdin = io.StringIO(test_input[i])
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = io.StringIO()  # подменяем на буфер
             output_io = io.StringIO()
             with redirect_stdout(output_io):
                 spec.loader.exec_module(user_module)

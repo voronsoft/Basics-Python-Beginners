@@ -15,6 +15,9 @@ def test_7_5_5(path_tmp_file: str, task_num_test: str):
     # Подменяем stdin на фейковый с тестовыми данными
     test_input = "1 0 0 0 0\n0 0 1 0 0\n0 0 0 0 0\n0 1 0 1 0\n0 0 0 0 0"
     sys.stdin = StringIO(test_input)
+    # Заглушка для sys.stderr
+    original_stderr = sys.stderr  # сохраняем оригинал
+    sys.stderr = StringIO()  # подменяем на буфер
 
     # Перенаправляем stdout, чтобы не засорять вывод тестов
     sys.stdout = StringIO()
@@ -157,6 +160,9 @@ def test_7_5_5_1(path_tmp_file: str, task_num_test: str):
     # Подменяем stdin на фейковый с тестовыми данными
     fake_input = "1 0 0 0 0\n0 0 1 0 0\n0 0 0 0 0\n0 1 0 1 0\n0 0 0 0 0"
     sys.stdin = StringIO(fake_input)
+    # Заглушка для sys.stderr
+    original_stderr = sys.stderr  # сохраняем оригинал
+    sys.stderr = StringIO()  # подменяем на буфер
     # Перенаправляем stdout, чтобы не засорять вывод тестов
     sys.stdout = StringIO()
 

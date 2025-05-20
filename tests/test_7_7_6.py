@@ -16,7 +16,9 @@ def test_7_7_6(path_tmp_file: str, task_num_test: str):
     # Подменяем stdin на фейковый с тестовыми данными
     test_input = "[6]"
     sys.stdin = StringIO(test_input)
-
+    # Заглушка для sys.stderr
+    original_stderr = sys.stderr  # сохраняем оригинал
+    sys.stderr = StringIO()  # подменяем на буфер
     # Перенаправляем stdout, чтобы не засорять вывод тестов
     sys.stdout = StringIO()
 
@@ -127,7 +129,6 @@ def test_7_7_6_1(path_tmp_file: str, task_num_test: str):
             # Получаем функцию get_line_list из модуля пользователя
             user_func = getattr(user_module, 'get_line_list')
             # Выполняем функцию
-            print("test_input[i]", test_input[i])
             output = user_func(list(test_input[i]))
 
             if output == expected_output[i]:

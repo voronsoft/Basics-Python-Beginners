@@ -96,7 +96,9 @@ def test_8_1_5_1(path_tmp_file: str):
         original_stdin = sys.stdin
         # Подменяем stdin на заглушку
         sys.stdin = StringIO("")
-
+        # Заглушка для sys.stderr
+        original_stderr = sys.stderr  # сохраняем оригинал
+        sys.stderr = StringIO()  # подменяем на буфер
         # Перехватываем вывод
         output_buffer = StringIO()
         original_stdout = sys.stdout

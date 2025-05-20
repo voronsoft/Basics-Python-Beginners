@@ -26,6 +26,9 @@ def test_10_3_3(path_tmp_file: str, task_num_test: str):
 
             # Подменяем stdin с тестовыми данными
             sys.stdin = StringIO(test_input[i])
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = StringIO()  # подменяем на буфер
 
             # Создаем буфер для перехвата вывода
             output_buffer = StringIO()

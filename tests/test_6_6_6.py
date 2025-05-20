@@ -45,6 +45,10 @@ def test_6_6_6(path_tmp_file: str, task_num_test: str):
 
             # 2. Имитация ввода через stdin
             sys.stdin = io.StringIO(input_data)
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = io.StringIO()  # подменяем на буфер
+
             spec.loader.exec_module(user_module)
 
             # 3. Проверка существования словаря d

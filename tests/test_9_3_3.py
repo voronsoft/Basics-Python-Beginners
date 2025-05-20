@@ -99,6 +99,9 @@ def test_9_3_3_1(path_tmp_file: str):
 
             # Подмена stdin (ввод)
             sys.stdin = StringIO(test_input[i])
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = StringIO()  # подменяем на буфер
 
             # Запускаем пользовательский код
             spec.loader.exec_module(user_module)

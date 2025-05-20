@@ -29,8 +29,10 @@ def test_7_4_4(path_tmp_file: str, task_num_test: str):
         original_stdout = sys.stdout
 
         # Подменяем stdin на фейковый с тестовыми данными
-        test_input = "Тестовая строка для ввода"
-        sys.stdin = StringIO(test_input + "\n")
+        sys.stdin = StringIO(" ")
+        # Заглушка для sys.stderr
+        original_stderr = sys.stderr  # сохраняем оригинал
+        sys.stderr = StringIO()  # подменяем на буфер
 
         # Перенаправляем stdout, чтобы не засорять вывод тестов
         sys.stdout = StringIO()

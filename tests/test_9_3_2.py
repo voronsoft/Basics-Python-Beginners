@@ -91,7 +91,9 @@ def test_9_3_2_1(path_tmp_file: str):
 
             # Подмена stdin (ввод)
             sys.stdin = StringIO(test_input[i])
-
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = StringIO()  # подменяем на буфер
             # Перехват stdout (вывода)
             output_buffer = StringIO()
             original_stdout = sys.stdout

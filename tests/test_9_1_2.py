@@ -76,6 +76,9 @@ def test_9_1_2_1(path_tmp_file: str):
 
         # Подменяем stdin
         sys.stdin = StringIO(test_input)
+        # Заглушка для sys.stderr
+        original_stderr = sys.stderr  # сохраняем оригинал
+        sys.stderr = StringIO()  # подменяем на буфер
 
         # Импортируем модуль пользователя заново
         spec = importlib.util.spec_from_file_location("user_code", path_tmp_file)

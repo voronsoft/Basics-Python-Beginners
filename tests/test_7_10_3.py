@@ -11,7 +11,10 @@ def test_7_10_3(path_tmp_file: str, task_num_test: str):
 
     original_stdin = sys.stdin
     original_stdout = sys.stdout
+    original_stderr = sys.stderr
     sys.stdin = StringIO("test")
+    # Заглушка для sys.stderr
+    sys.stderr = StringIO()
     sys.stdout = StringIO()
 
     result = []
@@ -107,6 +110,9 @@ def test_7_10_3_1(path_tmp_file: str, inner_func):
 
             # Подменяем stdin с тестовыми данными
             sys.stdin = StringIO(test_input[i])
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = StringIO()  # подменяем на буфер
 
             # Создаем буфер для перехвата вывода
             output_buffer = StringIO()

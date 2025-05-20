@@ -111,7 +111,9 @@ def test_7_5_6_1(path_tmp_file: str, task_num_test: str):
     # Сохраняем оригинальные потоки ввода/вывода
     original_stdin = sys.stdin
     original_stdout = sys.stdout
+    original_stderr = sys.stderr
 
+    sys.stderr = StringIO()
     # Перенаправляем stdout, чтобы не засорять вывод тестов
     sys.stdout = StringIO()
 

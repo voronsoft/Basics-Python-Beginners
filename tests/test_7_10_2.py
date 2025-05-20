@@ -12,8 +12,10 @@ def test_7_10_2(path_tmp_file: str, task_num_test: str):
     # Сохраняем оригинальные потоки ввода/вывода
     original_stdin = sys.stdin
     original_stdout = sys.stdout
+    original_stderr = sys.stderr
     # Подменяем stdin на фейковый с тестовыми данными
     sys.stdin = StringIO("0")
+    sys.stderr = StringIO()
     sys.stdout = StringIO()
 
     result = []  # Список для накопления результатов тестов
@@ -105,6 +107,9 @@ def test_7_10_2_1(path_tmp_file: str, task_num_test: str):
 
             # Подменяем stdin с тестовыми данными
             sys.stdin = StringIO(test_input[i])
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = StringIO()  # подменяем на буфер
 
             # Создаем буфер для перехвата вывода
             output_buffer = StringIO()

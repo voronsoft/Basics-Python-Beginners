@@ -16,7 +16,9 @@ def test_7_7_3(path_tmp_file: str, task_num_test: str):
     # Подменяем stdin на фейковый с тестовыми данными
     test_input = "8 11 -5 4 3"
     sys.stdin = StringIO(test_input)
-
+    # Заглушка для sys.stderr
+    original_stderr = sys.stderr  # сохраняем оригинал
+    sys.stderr = StringIO()  # подменяем на буфер
     # Перенаправляем stdout, чтобы не засорять вывод тестов
     sys.stdout = StringIO()
 

@@ -35,6 +35,10 @@ def test_7_2_6(path_tmp_file: str, task_num_test: str):
 
             # Имитация ввода и выполнение
             sys.stdin = io.StringIO(input_data)
+            # Заглушка для sys.stderr
+            original_stderr = sys.stderr  # сохраняем оригинал
+            sys.stderr = io.StringIO()  # подменяем на буфер
+
             spec.loader.exec_module(user_module)
 
             # Проверка наличия функции
