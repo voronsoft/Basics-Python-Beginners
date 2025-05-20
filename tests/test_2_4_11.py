@@ -19,6 +19,7 @@ def test_2_4_11(path_tmp_file: str, task_num_test: str):
             capture_output=True,  # Захватываем stdout и stderr
             creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
             encoding="utf-8",  # Явно указываем кодировку
+            timeout=5,  # Важно: ограничение времени выполнения кода
         )
 
         # Получаем результат (stdout)

@@ -4,9 +4,8 @@ import math
 
 import wx
 
-from config import IMAGES_PATH, JSON_COMPLETED_TASKS
+from config import IMAGES_PATH
 from task_tree.task_structure import lst_task_type
-from utils.func_utils import read_json_file
 
 _ = gettext.gettext
 

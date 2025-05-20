@@ -45,11 +45,6 @@ def test_10_3_7(path_tmp_file: str, task_num_test: str):
 def test_10_3_7_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
 
-    import importlib.util
-    import sys
-
-    from io import StringIO
-
     # Входные данные
     test_input = (
         "10",

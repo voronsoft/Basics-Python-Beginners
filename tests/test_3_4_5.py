@@ -30,12 +30,20 @@ def test_3_4_5(path_tmp_file: str, task_num_test: str):
         for i in range(len(test_input)):
             # Запускаем код пользователя, передавая ему входные данные через stdin
             process = subprocess.run(
-                ["python", "-I", "-E", "-X", "utf8", path_tmp_file],
+                [
+                    "python",
+                    "-I",
+                    "-E",
+                    "-X",
+                    "utf8",
+                    path_tmp_file,
+                ],
                 input=test_input[i],
-                text=True,
-                capture_output=True,
+                text=True,  # Режим работы с текстом
+                capture_output=True,  # Захватываем stdout и stderr
                 creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
-                encoding="utf-8",
+                encoding="utf-8",  # Явно указываем кодировку
+                timeout=5,  # Важно: ограничение времени выполнения кода
             )
 
             # Получаем результат (stdout)

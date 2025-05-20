@@ -1,5 +1,6 @@
 # 3_5_1 тест для задачи
 import subprocess
+import sys
 
 
 def test_3_5_1(path_tmp_file: str, task_num_test: str):
@@ -32,6 +33,7 @@ def test_3_5_1(path_tmp_file: str, task_num_test: str):
                 input=test_input[i],  # Передаём input
                 text=True,  # Режим работы с текстом
                 capture_output=True,  # Захватываем stdout и stderr
+                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
                 encoding="utf-8",  # Явно указываем кодировку
                 timeout=5,  # Важно: ограничение времени выполнения кода
             )

@@ -1,7 +1,6 @@
 # 7_4_2 тест для задачи
 import importlib.util
 import inspect
-import traceback
 
 
 def test_7_4_2(path_tmp_file: str, task_num_test: str):

@@ -14,12 +14,12 @@ import wx
 import wx.html2
 import wx.xrc
 
-from cod_editor.code_editor import Editor
-from config import TASKS_DESCR_HTML_PATH, VIDEO_PATH_DTL_SOL, JSON_COMPLETED_TASKS
 from app_statistics.certificate_generation import CertificateFrame
+from cod_editor.code_editor import Editor
+from config import TASKS_DESCR_HTML_PATH, VIDEO_PATH_DTL_SOL
 from task_tree.code_for_tasks import code_tasks
 from task_tree.task_structure import lst_task_type
-from utils.func_utils import get_test_func, status_completed_tasks, write_json_file
+from utils.func_utils import get_test_func, status_completed_tasks
 
 _ = gettext.gettext
 

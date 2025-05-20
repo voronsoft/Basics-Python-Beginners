@@ -80,7 +80,6 @@ def main_singl_window(self=None):
     """Запуск окна приложения с Ai ассистентом"""
     app = wx.App(False)
     screen_width, screen_height = wx.GetDisplaySize()
-    # print(screen_width, screen_height)
     ai_frame = AiWindow(self)
     ai_frame.Show()
     app.MainLoop()

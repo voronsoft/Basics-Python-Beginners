@@ -11,10 +11,19 @@ def test_1_3_1(path_tmp_file: str, task_num_test: str):
     try:
         # Запускаем код пользователя без входных данных
         process = subprocess.run(
-            ["python", "-I", "-E", "-X", "utf8", path_tmp_file],
-            text=True,
-            capture_output=True,
+            [
+                "python",
+                "-I",
+                "-E",
+                "-X",
+                "utf8",
+                path_tmp_file,
+            ],
+            text=True,  # Режим работы с текстом
+            capture_output=True,  # Захватываем stdout и stderr
             creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
+            encoding="utf-8",  # Явно указываем кодировку
+            timeout=5,  # Важно: ограничение времени выполнения кода
         )
 
         # Получаем результат (stdout)

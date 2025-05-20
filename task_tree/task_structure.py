@@ -1,5 +1,4 @@
 # Структура данных для дерева заданий
-from pprint import pprint
 
 structure_task = [
     (
