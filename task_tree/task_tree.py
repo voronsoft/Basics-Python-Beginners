@@ -84,9 +84,6 @@ class TaskTree(wx.TreeCtrl):
             item = queue.popleft()  # Берем первый элемент из очереди
 
             if label == self.GetItemText(item).split(" ")[0]:
-                print("----------------")
-                print(label, " - ", self.GetItemText(item).split(" ")[0])
-                print("----------------")
                 return item  # Нашли нужный элемент
 
             # Добавляем всех детей в очередь

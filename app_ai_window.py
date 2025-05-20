@@ -68,11 +68,11 @@ class AiWindow(wx.Frame):
 
     def on_close(self, event):
         """Обнуляем ссылку при закрытии окна"""
-        print("!!!!", self.GetParent())
+        # print("!!!!", self.GetParent())
         if self.GetParent():
-            print(self.GetParent().ai_helper_window)
+            # print(self.GetParent().ai_helper_window)
             self.GetParent().ai_helper_window = None
-            print(self.GetParent().ai_helper_window)
+            # print(self.GetParent().ai_helper_window)
         self.Destroy()
 
 
@@ -80,7 +80,7 @@ def main_singl_window(self=None):
     """Запуск окна приложения с Ai ассистентом"""
     app = wx.App(False)
     screen_width, screen_height = wx.GetDisplaySize()
-    print(screen_width, screen_height)
+    # print(screen_width, screen_height)
     ai_frame = AiWindow(self)
     ai_frame.Show()
     app.MainLoop()

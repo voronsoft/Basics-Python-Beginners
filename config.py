@@ -11,7 +11,9 @@ if getattr(sys, 'frozen', False):
     JSON_COMPLETED_TASKS = Path(os.getenv('LOCALAPPDATA')) / "Basics Python Beginners" / "data" / "completed_tasks.json"
     # Путь к файлу json - сохранение состояния активного (выбранного) элемента
     # (для запуска приложения с пункта на котором в прошлый раз была закрыта программа).
-    JSON_FILE_TREE_CONDITION = Path(os.getenv('LOCALAPPDATA')) / "Basics Python Beginners" / "data" / "tree_condition.json"
+    JSON_FILE_TREE_CONDITION = (
+        Path(os.getenv('LOCALAPPDATA')) / "Basics Python Beginners" / "data" / "tree_condition.json"
+    )
 else:
     # ЕСЛИ ПРИЛОЖЕНИЕ ЗАПУЩЕНО КАК СКРИПТ PYTHON, ИСПОЛЬЗУЕМ ДИРЕКТОРИЮ СКРИПТА
     PROJECT_ROOT = Path(__file__).resolve().parent
@@ -39,19 +41,3 @@ TASK_FILES_CACHE = {f.name for f in TASKS_DESCR_HTML_PATH.iterdir() if f.is_file
 # Кеш файлов в директории с видео
 VIDEO_CACHE = {f.name for f in VIDEO_PATH.iterdir() if f.is_file()}
 
-if __name__ == "__main__":
-    # Выводим пути в консоль для проверки
-    print("PROJECT_ROOT:", PROJECT_ROOT)
-    print("JSON_COMPLETED_TASKS:", JSON_COMPLETED_TASKS)
-    print("JSON_FILE_TREE_CONDITION:", JSON_FILE_TREE_CONDITION)
-    print("TASKS_PATH:", TASKS_PATH)
-    print("TASKS_DESCR_HTML_PATH:", TASKS_DESCR_HTML_PATH)
-    print("VIDEO_PATH:", VIDEO_PATH)
-    print("VIDEO_PATH_DTL_SOL:", VIDEO_PATH_DTL_SOL)
-    print("IMAGES_PATH:", IMAGES_PATH)
-    print("TESTS_PATH:", TESTS_PATH)
-
-    # Если нужно вывести, где ищется CSS, JS или HTML файлы
-    print("Path to .HTML file:", TASKS_DESCR_HTML_PATH / "index.html")
-    print("Path to .CSS file:", TASKS_DESCR_HTML_PATH / "css" / "style.css")
-    print("Path to .JS file:", TASKS_DESCR_HTML_PATH / "js" / "style.js")

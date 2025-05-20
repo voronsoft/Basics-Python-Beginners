@@ -8,7 +8,7 @@ def test_3_6_4(path_tmp_file: str, task_num_test: str):
     # Проверяем, есть ли в коде if условие
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
-        print(user_code)
+        # print(user_code)
 
     # Проверяем, содержит ли код хотя бы одну f-строку вида:
     string_prefixes = ('if', 'elif', 'else')

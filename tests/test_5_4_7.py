@@ -8,7 +8,7 @@ def test_5_4_7(path_tmp_file: str, task_num_test: str):
     # Проверяем, есть ли в коде enumerate(
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
-        print(user_code)
+        # print(user_code)
 
     if "enumerate(" not in user_code:
         raise ValueError("------------- FAIL Тест -------------\n" "Не найдено 'enumerate(' в коде.")

@@ -293,10 +293,8 @@ class MainFrame(wx.Frame):
 
         # Проверяем, существует ли файл thonny.exe по пути
         if thonny_path.exists():
-            print(thonny_path)
             subprocess.Popen([str(thonny_path)])  # Запускаем Thonny с файлом
         elif alternative_path.exists():
-            print(alternative_path)
             subprocess.Popen([str(alternative_path)])  # Запускаем Thonny с файлом
 
         # Продолжаем обработку других событий

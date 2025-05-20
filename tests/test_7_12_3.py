@@ -73,8 +73,8 @@ def test_7_12_3(path_tmp_file: str, task_num_test: str):
         result.append(f"Декоратор найден, применяется к функции '{matched_func}', которая принимает параметр(ы).")
         result.append("--------------OK structure -------------\n")
 
-        print("decorated_funcs", decorated_funcs[0].name, matched_func)
-        print("decorator_names[0]", decorator_names[0])
+        #print("decorated_funcs", decorated_funcs[0].name, matched_func)
+        #print("decorator_names[0]", decorator_names[0])
         # Дополнительно — тест выполнения кода
         try:
             res = test_7_12_3_1(path_tmp_file, matched_func, decorator_names[0])

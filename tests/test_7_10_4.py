@@ -149,7 +149,7 @@ def test_7_10_4_1(path_tmp_file: str, outer_func):
             inn_fnc = outer_func(tag)
             # Получаем результат
             answ = inn_fnc(string)
-            print(333, answ)
+            # print(333, answ)
             # Проверяем результат перехваченного вывода и то что возвращает функция при прямом обращении
             if captured_output == expected_output[i] and answ == expected_output[i]:
                 test_result.append(f"Получено: {captured_output}\n")
