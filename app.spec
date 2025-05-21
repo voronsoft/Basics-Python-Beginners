@@ -4,7 +4,7 @@ a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[('WebView2Loader.dll', '.')],
-    datas=[("tests", "tests"), ("img", "img")],
+    datas=[("tests", "tests"), ("utils", "utils"), ("img", "img")],
     hiddenimports=['tasks.base_task', 'tasks.welcome'],  # Добавляем модуль tasks.base_task
     hookspath=[],
     hooksconfig={},

@@ -5,6 +5,8 @@ import sys
 
 from io import StringIO
 
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
+
 
 def test_7_12_4(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры кода (наличие декоратора)"""
@@ -73,12 +75,10 @@ def test_7_12_4(path_tmp_file: str, task_num_test: str):
 
 def test_7_12_4_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
-    # Входные данные
     test_input = ("8 11 -5 4 3 10",)
-    # Ожидаемый результат
     expected_output = (31,)
 
-    result = []  # Список для накопления результатов тестов
+    result = []
 
     try:
         for i in range(len(test_input)):
@@ -86,70 +86,143 @@ def test_7_12_4_1(path_tmp_file: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            # Подменяем stdin с тестовыми данными
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-            # Сохраняем оригинальный stdout
-            original_stdout = sys.stdout
-            # Перенаправляем stdout в буфер
-            sys.stdout = output_buffer
+            # Получаем функцию из модуля
+            get_list = getattr(user_module, "get_list")
 
-            spec.loader.exec_module(user_module)
+            # Вызываем функцию с тестовым вводом
+            out_answer = get_list(test_input[i])
 
-            # Проверяем результат
-            test_result = list()
+            # Получаем перехваченный stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
+
+            # Формируем отчет по тесту
+            test_result = []
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
             test_result.append(f"Входные данные: {test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
-            # Восстанавливаем оригинальный stdout
-            sys.stdout = original_stdout
-
-            get_list = getattr(user_module, "get_list")  # Получаем функцию из модуля
-            # Выполняем функцию
-            out_answer = get_list(test_input[i])
-
-            # Получаем перехваченный вывод из print()
-            captured_output = output_buffer.getvalue().rstrip()
-
-            # Проверяем результат перехваченного вывода
             if out_answer == expected_output[i]:
                 test_result.append(f"Получено: {out_answer}\n")
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Входные данные: {test_input[i]}\n"
-                    f"Ожидалось: {expected_output[i]}\nно получен: {out_answer}\n"
+                    f"Ожидалось: {expected_output[i]}\n"
+                    f"Получено: {out_answer}\n"
                 )
 
-            # Получаем __doc__
+            # Проверяем __doc__
             d = get_list.__doc__
             if d != 'Функция для формирования списка целых значений':
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Ожидалось: 'Функция для формирования списка целых значений'\n"
-                    f"но получен: '{d}'\n"
+                    f"Получено: '{d}'\n"
                 )
             else:
                 test_result.append(f"__doc__ = {d}")
-            # Получаем __name__
+
+            # Проверяем __name__
             n = get_list.__name__
             if n != 'get_list':
                 raise ValueError(
-                    f"------------- FAIL Тест: {i + 1} --------\n" f"Ожидалось: 'get_list'\n" f"но получен: {d}\n"
+                    f"------------- FAIL Тест: {i + 1} --------\n" f"Ожидалось: 'get_list'\n" f"Получено: '{n}'\n"
                 )
             else:
                 test_result.append(f"__name__ = {n}")
 
             result.append("\n".join(test_result))
 
-        return "\n".join(result)  # Возвращаем статус и результаты тестов
+        return "\n".join(result)
+
     except Exception as e:
-        # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения кода:\n{error_info}")
+
+
+# def test_7_12_4_1(path_tmp_file: str):
+#     """Функция тестирования кода пользователя"""
+#     # Входные данные
+#     test_input = ("8 11 -5 4 3 10",)
+#     # Ожидаемый результат
+#     expected_output = (31,)
+#
+#     result = []  # Список для накопления результатов тестов
+#
+#     try:
+#         for i in range(len(test_input)):
+#             # Импортируем модуль пользователя
+#             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
+#             user_module = importlib.util.module_from_spec(spec)
+#
+#             # Подменяем stdin с тестовыми данными
+#             sys.stdin = StringIO(test_input[i])
+#             # Заглушка для sys.stderr
+#             original_stderr = sys.stderr  # сохраняем оригинал
+#             sys.stderr = StringIO()  # подменяем на буфер
+#
+#             # Создаем буфер для перехвата вывода
+#             output_buffer = StringIO()
+#             # Сохраняем оригинальный stdout
+#             original_stdout = sys.stdout
+#             # Перенаправляем stdout в буфер
+#             sys.stdout = output_buffer
+#
+#             spec.loader.exec_module(user_module)
+#
+#             # Проверяем результат
+#             test_result = list()
+#             test_result.append(f"---------------OK Тест: {i + 1} --------------")
+#             test_result.append(f"Входные данные: {test_input[i]}")
+#             test_result.append(f"Ожидалось: {expected_output[i]}")
+#
+#             # Восстанавливаем оригинальный stdout
+#             sys.stdout = original_stdout
+#
+#             get_list = getattr(user_module, "get_list")  # Получаем функцию из модуля
+#             # Выполняем функцию
+#             out_answer = get_list(test_input[i])
+#
+#             # Получаем перехваченный вывод из print()
+#             captured_output = output_buffer.getvalue().rstrip()
+#
+#             # Проверяем результат перехваченного вывода
+#             if out_answer == expected_output[i]:
+#                 test_result.append(f"Получено: {out_answer}\n")
+#             else:
+#                 raise ValueError(
+#                     f"------------- FAIL Тест: {i + 1} --------\n"
+#                     f"Входные данные: {test_input[i]}\n"
+#                     f"Ожидалось: {expected_output[i]}\nно получен: {out_answer}\n"
+#                 )
+#
+#             # Получаем __doc__
+#             d = get_list.__doc__
+#             if d != 'Функция для формирования списка целых значений':
+#                 raise ValueError(
+#                     f"------------- FAIL Тест: {i + 1} --------\n"
+#                     f"Ожидалось: 'Функция для формирования списка целых значений'\n"
+#                     f"но получен: '{d}'\n"
+#                 )
+#             else:
+#                 test_result.append(f"__doc__ = {d}")
+#             # Получаем __name__
+#             n = get_list.__name__
+#             if n != 'get_list':
+#                 raise ValueError(
+#                     f"------------- FAIL Тест: {i + 1} --------\n" f"Ожидалось: 'get_list'\n" f"но получен: {d}\n"
+#                 )
+#             else:
+#                 test_result.append(f"__name__ = {n}")
+#
+#             result.append("\n".join(test_result))
+#
+#         return "\n".join(result)  # Возвращаем статус и результаты тестов
+#     except Exception as e:
+#         # Добавляем информацию об ошибке к результатам
+#         error_info = "\n".join(result) + f"\n{e}"
+#         raise RuntimeError(f"Ошибка выполнения кода:\n{error_info}")
