@@ -34,8 +34,7 @@ def create_project_tree_files(
         lines = []
         try:
             entries = sorted(
-                [e for e in path.iterdir() if not is_ignored(e)],
-                key=lambda x: (not x.is_dir(), x.name.lower())
+                [e for e in path.iterdir() if not is_ignored(e)], key=lambda x: (not x.is_dir(), x.name.lower())
             )
         except PermissionError:
             return lines
@@ -58,8 +57,7 @@ def create_project_tree_files(
         html = ""
         try:
             entries = sorted(
-                [e for e in path.iterdir() if not is_ignored(e)],
-                key=lambda x: (not x.is_dir(), x.name.lower())
+                [e for e in path.iterdir() if not is_ignored(e)], key=lambda x: (not x.is_dir(), x.name.lower())
             )
         except PermissionError:
             return html
@@ -116,6 +114,7 @@ def create_project_tree_files(
 
 
 if __name__ == '__main__':
+    """Запуск генерации дерева файлов в проекте"""
     create_project_tree_files(
         root_path=PROJECT_ROOT,
         md_file='README_project_tree.md',
@@ -132,4 +131,3 @@ if __name__ == '__main__':
             'README_project_tree.html',
         ],
     )
-    print("PROJECT_ROOT", PROJECT_ROOT)
