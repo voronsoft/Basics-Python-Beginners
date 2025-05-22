@@ -69,9 +69,10 @@ stream_interceptor — контекстный менеджер, который �
 - Если не нужно менять stdin, передавайте stdin_data=None (по умолчанию).
 """
 
+import sys
+
 from contextlib import contextmanager
 from io import StringIO
-import sys
 
 
 @contextmanager
