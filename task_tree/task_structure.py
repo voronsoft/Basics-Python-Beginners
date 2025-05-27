@@ -52,7 +52,7 @@ structure_task = [
                             ("task_2_2_2 Задача", "question"),
                             ("task_2_2_3 Задача", "question"),
                             ("task_2_2_4 Задача", "question"),
-                            ("task_2_2_5 Задача", "question"),
+                            ("task_2_2_5 Задача", "dragdrop"),
                             ("task_2_2_6 Задача", "file"),
                             ("task_2_2_7 Задача", "file"),
                             ("task_2_2_8 Задача", "file"),
@@ -639,6 +639,8 @@ structure_task = [
                         "folder",
                         [
                             ("video: Рекурсивные функции", "info"),
+                            ("video: Рекурсивные функции ч2", "info"),
+                            ("video: Хвостовая рекурсия", "info"),
                             ("task_7_7_1 Задача", "question"),
                             ("task_7_7_2 Задача", "file"),
                             ("task_7_7_3 Задача", "file"),
@@ -1060,6 +1062,13 @@ structure_task = [
                         "folder",
                         [
                             ("video: Аннотации типов на уровне классов", "info"),
+                        ],
+                    ),
+                    (
+                        "10.12 Моржовая операция присваивания",
+                        "folder",
+                        [
+                            ("video: Моржовая операция присваивания (walrus operator)", "info"),
                         ],
                     ),
                 ],

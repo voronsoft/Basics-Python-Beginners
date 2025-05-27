@@ -377,4 +377,4 @@ def run_test_function_with_timeout(test_function, path, name, timeout=10):
         else:
             raise TimeoutError(result)
 
-    return False, "Не удалось получить результат из теста"
+    raise RuntimeError("ЧТО ТО ПОШЛО НЕ ТАК В КОДЕ\n\nНе удалось получить результат из теста")
