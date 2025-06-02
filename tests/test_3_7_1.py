@@ -39,6 +39,11 @@ def test_3_7_1(path_tmp_file: str, task_num_test: str):
 
         # Получаем результат (stdout)
         output = process.stdout.strip()
+        # Получаем сообщения об ошибках
+        error = process.stderr.strip()
+        if error:  # Если есть ошибки в коде выводим
+            raise ValueError(error)
+
         test_result = list()
         test_result.append("---------------OK Тест: 1 --------------")
         test_result.append(f"Входные данные: {test_input}")
@@ -47,7 +52,6 @@ def test_3_7_1(path_tmp_file: str, task_num_test: str):
         # Сравниваем результат с ожидаемым значением
         if output == expected_output:
             test_result.append(f"Получено: {output}\n")
-            test_result.append(f'{output} == {expected_output}\n')
         else:
             raise ValueError(
                 f"------------- FAIL Тест: 1 --------\n"

@@ -2,6 +2,8 @@
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_6_2_7(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
@@ -23,6 +25,12 @@ def test_6_2_7(path_tmp_file: str, task_num_test: str):
     result = []  # Список для накопления результатов тестов
 
     try:
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Проверка кода на безопасность
+        check_code_safety(user_code, allowed_imports=["sys"], allowed_calls=["sys.stdin.readlines"])
+
         for i in range(len(test_input)):
             # Запускаем код пользователя, передавая ему входные данные через stdin
             process = subprocess.run(

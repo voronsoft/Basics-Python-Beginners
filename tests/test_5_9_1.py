@@ -2,6 +2,8 @@
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_5_9_1(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
@@ -21,6 +23,13 @@ def test_5_9_1(path_tmp_file: str, task_num_test: str):
     result = []  # Список для накопления результатов тестов
 
     try:
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+
+        # Проверка кода на безопасность
+        check_code_safety(user_code, allowed_imports=["sys"], allowed_calls=["sys.stdin.readlines"])
+
         for i in range(len(test_input)):
             # Запускаем код пользователя, передавая ему входные данные через stdin
             process = subprocess.run(
@@ -42,7 +51,7 @@ def test_5_9_1(path_tmp_file: str, task_num_test: str):
 
             test_result = list()
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
-            test_result.append(f"Входные данные: {test_input[i]}")
+            test_result.append(f"Входные данные:\n{test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
             # Сравниваем результат с ожидаемым значением
@@ -52,7 +61,7 @@ def test_5_9_1(path_tmp_file: str, task_num_test: str):
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
-                    f"Входные данные: {test_input[i]}\n"
+                    f"Входные данные:\n{test_input[i]}\n"
                     f"Ожидалось: {expected_output[i]}\nно получен: {output}\n"
                 )
 

@@ -1,17 +1,55 @@
 # 7_1_8 тест для задачи
+import ast
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_7_1_8(path_tmp_file: str, task_num_test: str):
+    """Тестирование структуры кода"""
+
+    result = []
+
+    try:
+        result.append("-------------Тест structure -------------")
+
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
+
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
+
+        find_func = False
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                find_func = node.name
+
+        if not find_func:
+            raise ValueError("ОШИБКА: Не найдена функция в коде")
+
+        result.append(f"Функция найдена: {find_func}")
+        result.append("--------------OK structure -------------\n")
+
+        # Дополнительно — тест выполнения кода
+        try:
+            res = test_7_1_8_1(path_tmp_file)
+            result.append(res)
+        except Exception as e:
+            raise ValueError(str(e))
+
+        return True, "\n".join(result)
+
+    except Exception as e:
+        error_info = "\n".join(result) + f"\n{e}"
+        raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
+
+
+def test_7_1_8_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
-    # Проверяем, есть ли в коде 'def '
-    with open(path_tmp_file, "r", encoding="utf-8") as f:
-        user_code = f.read()
-
-    if "def " not in user_code:
-        raise ValueError("------------- FAIL Тест -------------\n" "В коде не найдено объявление функции 'def '")
-
     # Входные данные
     test_input = (
         "sc_lib@list.com",
@@ -75,7 +113,7 @@ def test_7_1_8(path_tmp_file: str, task_num_test: str):
 
             result.append("\n".join(test_result))
 
-        return True, "\n".join(result)  # Возвращаем статус и результаты тестов
+        return "\n".join(result)  # Возвращаем статус и результаты тестов
     except Exception as e:
         # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"

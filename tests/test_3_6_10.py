@@ -2,6 +2,8 @@
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_3_6_10(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
@@ -9,8 +11,10 @@ def test_3_6_10(path_tmp_file: str, task_num_test: str):
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
 
-    # Проверка, что book создается как список
+    # Проверка кода на безопасность
+    check_code_safety(user_code)
 
+    # Проверка, что book создается как список
     # Проверка, что используется выражение в коде - print(*lst)
     if 'print(*lst)' not in user_code:
         raise ValueError(

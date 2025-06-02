@@ -2,6 +2,8 @@
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_2_4_11(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
@@ -12,6 +14,11 @@ def test_2_4_11(path_tmp_file: str, task_num_test: str):
     result = []  # Список для накопления результатов тестов
 
     try:
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        check_code_safety(user_code)
+
         # Запускаем код пользователя, передавая ему входные данные через stdin
         process = subprocess.run(
             ["python", "-I", "-E", "-X", "utf8", path_tmp_file],  # Запуск в изолир среде: -I(изол), -E(игнор пер/окруж)
@@ -24,6 +31,11 @@ def test_2_4_11(path_tmp_file: str, task_num_test: str):
 
         # Получаем результат (stdout)
         output = process.stdout.strip()
+        # Получаем сообщения об ошибках
+        error = process.stderr.strip()
+        if error:  # Если есть ошибки в коде выводим
+            raise ValueError(error)
+
         test_result = list()
         test_result.append(f"---------------OK Тест --------------")
         test_result.append(f"Ожидалось: {expected_output}")

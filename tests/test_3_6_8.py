@@ -2,6 +2,8 @@
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_3_6_8(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
@@ -9,8 +11,10 @@ def test_3_6_8(path_tmp_file: str, task_num_test: str):
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
 
-    # Проверка, что book создается как список
+    # Проверка кода на безопасность
+    check_code_safety(user_code)
 
+    # Проверка, что book создается как список
     if not any(i in user_code for i in ("book = list(", "book = [")):
         raise ValueError("------------- FAIL Тест -------------\n" "Переменная 'book' должна быть списком (list).\n")
 

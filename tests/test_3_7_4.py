@@ -2,12 +2,17 @@
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_3_7_4(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
     # Проверяем, содержит ли код список из задачи c = ['Токио', 'Берлин', 'Париж', 'Лондон', 'Нью-Йорк', 'Сидней', 'Пекин']
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
+
+    # Проверка кода на безопасность
+    check_code_safety(user_code)
 
     string = "c = ['Токио', 'Берлин', 'Париж', 'Лондон', 'Нью-Йорк', 'Сидней', 'Пекин']"
 
@@ -38,6 +43,11 @@ def test_3_7_4(path_tmp_file: str, task_num_test: str):
 
         # Получаем результат (stdout)
         output = process.stdout.strip()
+        # Получаем сообщения об ошибках
+        error = process.stderr.strip()
+        if error:  # Если есть ошибки в коде выводим
+            raise ValueError(error)
+
         test_result = list()
         test_result.append("---------------OK Тест: 1 --------------")
         test_result.append(f"Входные данные: c = ['Токио', 'Берлин', 'Париж', 'Лондон', 'Нью-Йорк', 'Сидней', 'Пекин']")

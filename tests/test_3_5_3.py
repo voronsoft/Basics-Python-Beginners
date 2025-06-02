@@ -2,13 +2,17 @@
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_3_5_3(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
     # Проверяем, есть ли в коде if условие
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
-        print(user_code)
+
+    # Проверка кода на безопасность
+    check_code_safety(user_code)
 
     # Проверяем, содержит ли код хотя бы одну f-строку вида:
     string_prefixes = ('if', 'elif', 'else')

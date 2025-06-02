@@ -1,80 +1,50 @@
 # 7_5_6 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_5_6(path_tmp_file: str, task_num_test: str):
-    """Тестирование структуры кода:
-    - Проверка наличия функции str_min
-    - Проверка наличия функции str_min3
-    - Проверка наличия функции str_min4
-    - Проверка типов атрибутов
-    """
+    """Тестирование структуры"""
 
     result = []  # Список для накопления результатов тестов
 
     try:
         result.append(f"-------------Тест structure ------------")
 
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-
         # Читаем исходный код для анализа AST
         with open(path_tmp_file, 'r', encoding='utf-8') as f:
-            source_code = f.read()
-        tree = ast.parse(source_code)
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
 
-        # Проверяем что есть необходимые атрибуты в коде пользователя
-        attr_search = {"str_min": "function", "str_min3": "function", "str_min4": "function"}
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
 
-        for item, expected_type in attr_search.items():
-            if not hasattr(user_module, item):
-                raise AttributeError(f"ОШИБКА '{item}' не найден(а) в коде пользователя")
-            else:
-                # Получаем сам атрибут
-                attr = getattr(user_module, item)
-                # Получаем его тип
-                attr_type = type(attr).__name__
-
-                # Проверяем тип
-                if expected_type == "function":
-                    # Для функций проверяем, является ли атрибут вызываемым
-                    if not callable(attr):
-                        raise TypeError(f"ОШИБКА: '{item}' найден, но не является функцией (тип: {attr_type})")
-                    result.append(f"Найдено: '{item}' (тип: {attr_type})")
-                else:
-                    # Для других типов проверяем соответствие
-                    if attr_type != expected_type:
-                        raise TypeError(
-                            f"ОШИБКА: '{item}' имеет неверный тип. Ожидается {expected_type}, получен {attr_type}"
-                        )
-                    result.append(f"Найдено: '{item}' (тип: {attr_type})")
-
-        # Проверяем использование str_min в str_min3 и str_min4 через AST
-        str_min3_uses_str_min = False
-        str_min4_uses_str_min = False
+        find_str_min = False
+        find_str_min3 = False
+        find_str_min4 = False
 
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef):
-                if node.name == 'str_min3':
+                if node.name == 'str_min':
+                    find_str_min = True
+                elif node.name == 'str_min3':
                     for subnode in ast.walk(node):
                         if isinstance(subnode, ast.Call) and isinstance(subnode.func, ast.Name):
                             if subnode.func.id == 'str_min':
-                                str_min3_uses_str_min = True
+                                find_str_min3 = True
                 elif node.name == 'str_min4':
                     for subnode in ast.walk(node):
                         if isinstance(subnode, ast.Call) and isinstance(subnode.func, ast.Name):
                             if subnode.func.id == 'str_min':
-                                str_min4_uses_str_min = True
+                                find_str_min4 = True
 
-        if not str_min3_uses_str_min:
+        if not find_str_min3:
             raise ValueError("ОШИБКА: функция str_min3 не использует str_min")
-        if not str_min4_uses_str_min:
+        if not find_str_min4:
             raise ValueError("ОШИБКА: функция str_min4 не использует str_min")
 
         result.append("Проверка использования str_min в str_min3 и str_min4: OK")
@@ -108,22 +78,16 @@ def test_7_5_6_1(path_tmp_file: str, task_num_test: str):
         (("омск", "самара", "тольятти", "ульяновск"), "омск", "омск", "омск"),
     )
 
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-    original_stderr = sys.stderr
-
-    sys.stderr = StringIO()
-    # Перенаправляем stdout, чтобы не засорять вывод тестов
-    sys.stdout = StringIO()
-
     result = []  # Список для накопления результатов тестов
 
     try:
         # Загружаем пользовательский модуль
         spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
+
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data="", capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
 
         # Получаем функции для тестирования
         str_min = user_module.str_min
@@ -170,7 +134,3 @@ def test_7_5_6_1(path_tmp_file: str, task_num_test: str):
         # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения кода:\n\n{error_info}")
-    finally:
-        # Восстанавливаем потоки в исходное состояние
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout

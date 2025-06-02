@@ -1,6 +1,5 @@
 # 3_8_1 тест для задачи
 def test_3_8_1(*args):
-
     expected = dict(
         sorted(
             {
@@ -14,5 +13,4 @@ def test_3_8_1(*args):
     )
 
     user_output = dict(sorted(args[0].items()))
-
     assert expected == user_output, "Нет, это неправильный ответ."

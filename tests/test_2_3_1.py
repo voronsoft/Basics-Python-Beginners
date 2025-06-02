@@ -1,6 +1,8 @@
 # 2_3_1 тест для задачи
-import subprocess
-import sys
+import importlib.util
+
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_2_3_1(path_tmp_file: str, task_num_test: str):
@@ -13,31 +15,21 @@ def test_2_3_1(path_tmp_file: str, task_num_test: str):
     result = []  # Список для накопления результатов тестов
 
     try:
-        for i in range(len(test_input)):
-            # Запускаем код пользователя, передавая ему входные данные через stdin
-            process = subprocess.run(
-                [
-                    "python",
-                    "-I",
-                    "-E",
-                    "-X",
-                    "utf8",
-                    path_tmp_file,
-                ],  # Запуск в изолир среде: -I(изол), -E(игнор пер/окруж)
-                input=test_input[i],  # Передаём input
-                text=True,  # Режим работы с текстом
-                capture_output=True,  # Захватываем stdout и stderr
-                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
-                encoding="utf-8",  # Явно указываем кодировку
-                timeout=5,  # Важно: ограничение времени выполнения кода
-            )
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        check_code_safety(user_code)
 
-            # Получаем результат (stdout)
-            output = process.stdout.strip()
-            # Получаем сообщения об ошибках
-            error = process.stderr.strip()
-            if error:  # Если есть ошибки в коде выводим
-                raise ValueError(error)
+        for i in range(len(test_input)):
+            # Импортируем модуль пользователя
+            spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
+            user_module = importlib.util.module_from_spec(spec)
+
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
+                # Получаем перехваченный вывод из stdout
+                captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             test_result = list()
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
@@ -45,14 +37,14 @@ def test_2_3_1(path_tmp_file: str, task_num_test: str):
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
             # Сравниваем результат с ожидаемым значением
-            if output == expected_output[i]:
-                test_result.append(f"Получено: {output}\n")
+            if captured_output == expected_output[i]:
+                test_result.append(f"Получено: {captured_output}\n")
 
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} -------------\n"
                     f"Входные данные: {test_input[i]}\n"
-                    f"Ожидалось: {expected_output[i]}\nно получен: {output}\n"
+                    f"Ожидалось: {expected_output[i]}\nно получен: {captured_output}\n"
                 )
 
             result.append("\n".join(test_result))

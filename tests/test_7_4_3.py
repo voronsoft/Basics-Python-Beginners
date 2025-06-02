@@ -1,83 +1,97 @@
 # 7_4_3 тест для задачи
+import ast
 import importlib.util
-import inspect
+
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_4_3(path_tmp_file: str, task_num_test: str):
-    """Функция тестирования функции check_password из пользовательского файла"""
+    """Тестирование структуры кода"""
 
-    # Входные данные
-    test_input = (
-        ("12345678!"),
-        ("4364#"),
-        ("dfghfgh8gf7h6f"),
-        ("5657dfgfh098A!@#"),
-    )
+    result = []
 
-    # Ожидаемые результаты
-    expected_output = (
-        True,
-        False,
-        False,
-        True,
-    )
+    try:
+        result.append("-------------Тест structure -------------")
+
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
+
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
+
+        find_func = False
+        find_args = False
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                if node.name == "check_password" and len(node.args.args) == 2:
+                    find_func = node.name
+                    find_args = len(node.args.args)
+
+        if not find_func:
+            raise ValueError(
+                "ОШИБКА: Не найдена функция 'check_password(a, chars='$%!?@#')'\nили неверное количество аргументов"
+            )
+
+        result.append(f"Функция найдена: '{find_func}' параметров: {find_args}")
+        result.append("--------------OK structure -------------\n")
+
+        # Дополнительно — тест выполнения кода
+        try:
+            res = test_7_4_3_1(path_tmp_file)
+            result.append(res)
+        except Exception as e:
+            raise ValueError(str(e))
+
+        return True, "\n".join(result)
+
+    except Exception as e:
+        error_info = "\n".join(result) + f"\n{e}"
+        raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
+
+
+def test_7_4_3_1(path_tmp_file: str):
+    """Функция тестирования кода пользователя"""
+
+    test_input = ("12345678!", "4364#", "dfghfgh8gf7h6f", "5657dfgfh098A!@#")
+    expected_output = (True, False, False, True)
 
     result = []  # Результаты тестов
 
     try:
-        # Загружаем модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-
-        # Проверяем наличие функции
-        if not hasattr(user_module, "check_password"):
-            raise AttributeError("Функция 'check_password' не найдена в коде пользователя")
-
-        func = user_module.check_password
-
-        # --- ДОПОЛНИТЕЛЬНАЯ ПРОВЕРКА параметров функции ---
-        sig = inspect.signature(func)
-        params = sig.parameters  # словарь параметров
-
-        # Проверка количества параметров у функции
-        if len(params) != 2:
-            raise ValueError(f"Ожидалось 2 параметра в функции, но найдено: {len(params)}")
-        # Проверка, что chars есть в параметрах функции
-        if "chars" not in params:
-            raise ValueError("Параметр 'chars' не найден в списке параметров функции")
-
-        # Проверяем, что chars имеет значение по умолчанию "$%!?@#"
-        chars_param = params["chars"]
-        if chars_param.default != '$%!?@#':
-            raise ValueError("Параметр 'chars' должен иметь значение по умолчанию '$%!?@#'")
-
-        # Проходим по каждому тесту
         for i in range(len(test_input)):
-            args = test_input[i]
-            expected = expected_output[i]
+            spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
+            user_module = importlib.util.module_from_spec(spec)
 
-            # Вызываем функцию и передаем входные значения для теста
-            output = func(args)
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data="", capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
+            # Вызываем функцию
+            check_password = getattr(user_module, "check_password")
+            answer = check_password(test_input[i])
+
+            # Формируем отчет по тесту
             test_result = list()
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
             test_result.append(f"Входные данные: {test_input[i]}")
-            test_result.append(f"Ожидалось: {expected}")
+            test_result.append(f"Ожидалось: {expected_output[i]}")
 
-            if output == expected:
-                test_result.append(f"Получено: {output}\n")
+            if answer == expected_output[i]:
+                test_result.append(f"Получено: {answer}\n")
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Входные данные: {test_input[i]}\n"
-                    f"Ожидалось: {expected}\nно получен: {output}\n"
+                    f"Ожидалось: {expected_output[i]}\nно получен: {answer}\n"
                 )
 
             result.append("\n".join(test_result))
 
-        return True, "\n".join(result)
-
+        return "\n".join(result)
     except Exception as e:
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения кода:\n\n{error_info}")

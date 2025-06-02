@@ -1,59 +1,58 @@
 # 7_5_4 тест для задачи
+import ast
 import importlib.util
-import inspect
+
+from utils.code_security_check import check_code_safety
 
 
 def test_7_5_4(path_tmp_file: str, task_num_test: str):
-    """Тестирование функции get_data_fig структуры:
-    - Проверка наличия функции get_data_fig
-    - Проверка параметра tag
-    - Проверка значения параметра tag по умолчанию
-    """
-
+    """Тестирование структуры"""
     result = []  # Список для накопления результатов тестов
 
     try:
-        result.append(f"-------------Тест structure ------------")
+        result.append("-------------Тест structure -------------")
 
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Безопасность кода пользователя
+        check_code_safety(user_code)
 
-        # Проверяем, что функция get_data_fig присутствует
-        if not hasattr(user_module, "get_data_fig"):
-            raise AttributeError("ОШИБКА функция 'get_data_fig' не найдена в коде пользователя")
-        else:
-            result.append("Найдено: 'get_data_fig'")
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
 
-        # Получаем функцию для работы с ней
-        func = user_module.get_data_fig
+        find_func = False
+        find_varargs = False
+        find_kwargs = False
 
-        # --- Проверка параметров функции ---
-        sig = inspect.signature(func)
-        params = sig.parameters
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                if node.name == "get_data_fig":
+                    find_func = node.name
+                    # Проверяем наличие *args в аргументах функции
+                    if node.args.vararg:
+                        find_varargs = True
+                        arg_name = node.args.vararg.arg  # имя переменной (обычно 'args')
 
-        # --- Проверяем наличие параметра *args или подобный
-        var_positional_params = [name for name, p in params.items() if p.kind == inspect.Parameter.VAR_POSITIONAL]
+                    # Проверяем наличие **kwargs в аргументах функции
+                    if node.args.kwarg:
+                        find_kwargs = True
+                        kwarg_name = node.args.kwarg.arg
 
-        if var_positional_params:
-            result.append(f"Найдено: *{var_positional_params[0]}")
-        else:
-            raise ValueError("ОШИБКА: Не найден параметр *args")
+        if not find_func:
+            raise ValueError("ОШИБКА: Не найдена функция 'get_data_fig'")
 
-        # --- Проверяем наличие параметра *kwargs
-        var_keyword_params = [name for name, p in params.items() if p.kind == inspect.Parameter.VAR_KEYWORD]
+        if not find_varargs:
+            raise ValueError("ОШИБКА: Функция get_data_fig должна принимать произвольное количество аргументов (*args)")
 
-        if var_keyword_params:
-            result.append(f"Найдено: **{var_keyword_params[0]}")
-        else:
-            raise ValueError("ОШИБКА: Не найден параметр **kwargs")
+        if not find_kwargs:
+            raise ValueError("ОШИБКА: Функция get_data_fig должна принимать произвольное количество именованных аргументов (*kwargs)")
 
-        result.append(f"--------------OK structure -------------\n")
+        result.append(f"Функция найдена: '{find_func}' с параметрами *{arg_name} **{kwarg_name}")
+        result.append("--------------OK structure -------------\n")
 
-        # Запускаем вторую часть теста (выполнение кода пользователя)
+        # Дополнительно — тест выполнения кода
         try:
-            res = test_7_5_4_1(path_tmp_file, task_num_test)
+            res = test_7_5_4_1(path_tmp_file)
             result.append(res)
         except Exception as e:
             raise ValueError(str(e))
@@ -61,11 +60,12 @@ def test_7_5_4(path_tmp_file: str, task_num_test: str):
         return True, "\n".join(result)
 
     except Exception as e:
+        # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
-        raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
+        raise RuntimeError(f"Ошибка выполнения кода:\n\n{error_info}")
 
 
-def test_7_5_4_1(path_tmp_file: str, task_num_test: str):
+def test_7_5_4_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
     test_input = (

@@ -1,13 +1,58 @@
 # 7_2_6 тест для задачи
+import ast
 import importlib.util
-import inspect
-import io
 import sys
+
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_2_6(path_tmp_file: str, task_num_test: str):
+    """Тестирование структуры кода"""
+
+    result = []
+
+    try:
+        result.append("-------------Тест structure -------------")
+
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
+
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
+
+        find_func = False
+
+        # Поиск определения функции с аргументами
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                if node.name == "get_sq" and len(node.args.args) >= 1:
+                    find_func = node.name
+
+        if not find_func:
+            raise ValueError("ОШИБКА: Не найдено определение функции 'def get_sq(...)'\nили неверное количество аргументов")
+
+        result.append(f"Функция найдена: {find_func}")
+        result.append("--------------OK structure -------------\n")
+
+        # Дополнительно — тест выполнения кода
+        try:
+            res = test_7_2_6_1(path_tmp_file)
+            result.append(res)
+        except Exception as e:
+            raise ValueError(str(e))
+
+        return True, "\n".join(result)
+
+    except Exception as e:
+        error_info = "\n".join(result) + f"\n{e}"
+        raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
+
+
+def test_7_2_6_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
-    # Тестовые данные: (ввод, ожидаемое кол-во аргументов, аргументы, ожидаемый результат)
     test_input = [
         ("RECT", 2, (5, 2), 10),
         ("SQ", 1, (5,), 25),
@@ -17,13 +62,21 @@ def test_7_2_6(path_tmp_file: str, task_num_test: str):
     result = []  # Список для накопления результатов
 
     try:
-        # Настройка модуля
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        sys.modules["user_module"] = user_module
-
         for i in range(len(test_input)):
-            input_data, expected_args, call_args, expected = test_input[i]
+            # Импортируем модуль пользователя
+            spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
+            user_module = importlib.util.module_from_spec(spec)
+
+            # Подготавливаем входные данные для проверки кода
+            input_data, expected_args, call_args, expected_answer = test_input[i]
+
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=input_data, capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
+                # Получаем перехваченный вывод из stdout
+                captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
+
+
 
             # Подготовка теста
             test_result = [
@@ -33,47 +86,27 @@ def test_7_2_6(path_tmp_file: str, task_num_test: str):
                 f"Ожидалось аргументов: {expected_args}",
             ]
 
-            # Имитация ввода и выполнение
-            sys.stdin = io.StringIO(input_data)
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = io.StringIO()  # подменяем на буфер
-
-            spec.loader.exec_module(user_module)
-
-            # Проверка наличия функции
-            if not hasattr(user_module, "get_sq"):
-                raise ValueError("Функция 'get_sq' не найдена")
-
-            # Проверка количества аргументов
-            actual_args = len(inspect.getfullargspec(user_module.get_sq).args)
-            test_result.append(f"Получено аргументов: {actual_args}")
-
-            if actual_args != expected_args:
-                raise ValueError(
-                    f"------------- FAIL Тест {i+1} --------\n"
-                    f"Неверное количество аргументов\n"
-                    f"Ожидалось: {expected_args}\n"
-                    f"Получено: {actual_args}\n"
-                )
-
             # Проверка результата
-            output = user_module.get_sq(*call_args)
-            test_result.append(f"Ожидаемый результат: {expected}")
-            test_result.append(f"Получено: {output}\n")
+            answer_output = user_module.get_sq(*call_args)
+            test_result.append(f"Ожидаемый результат: {expected_answer}")
+            test_result.append(f"Получено: {answer_output}\n")
+
+            # Проверка вывода в консоль
+            if captured_output:
+                raise ValueError("Ошибка: В консоль выводить ничего не нужно.")
 
             # Сравниваем результат с ожидаемым значением
-            if output != expected:
+            if answer_output != expected_answer:
                 raise ValueError(
                     f"------------- FAIL Тест {i+1} --------\n"
                     f"Неверный результат вычислений\n"
-                    f"Ожидалось: {expected}\n"
-                    f"Получено: {output}\n"
+                    f"Ожидалось: {expected_answer}\n"
+                    f"Получено: {answer_output}\n"
                 )
 
             result.append("\n".join(test_result))
 
-        return True, "\n".join(result)
+        return "\n".join(result)
     except Exception as e:
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения кода:\n\n{error_info}")

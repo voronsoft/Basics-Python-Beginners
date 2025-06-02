@@ -2,12 +2,17 @@
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_5_4_7(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
     # Проверяем, есть ли в коде enumerate(
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
+
+    # Проверка кода на безопасность
+    check_code_safety(user_code)
 
     if "enumerate(" not in user_code:
         raise ValueError("------------- FAIL Тест -------------\n" "Не найдено 'enumerate(' в коде.")

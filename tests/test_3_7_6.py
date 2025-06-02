@@ -2,12 +2,17 @@
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_3_7_6(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
     # Проверяем, содержит ли код список из задачи m = [2, 3, 5, 5, 2, 2, 3, 3, 4, 5, 4, 4]
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
+
+    # Проверка кода на безопасность
+    check_code_safety(user_code)
 
     string = "m = [2, 3, 5, 5, 2, 2, 3, 3, 4, 5, 4, 4]"
 
@@ -39,6 +44,11 @@ def test_3_7_6(path_tmp_file: str, task_num_test: str):
 
         # Получаем результат (stdout)
         output = process.stdout.strip()
+        # Получаем сообщения об ошибках
+        error = process.stderr.strip()
+        if error:  # Если есть ошибки в коде выводим
+            raise ValueError(error)
+
         test_result = list()
         test_result.append("---------------OK Тест: 1 --------------")
         test_result.append(f"Входные данные: m = [2, 3, 5, 5, 2, 2, 3, 3, 4, 5, 4, 4]")
@@ -47,7 +57,6 @@ def test_3_7_6(path_tmp_file: str, task_num_test: str):
         # Сравниваем результат с ожидаемым значением
         if output == expected_output:
             test_result.append(f"Получено: {output}\n")
-            test_result.append(f'{output} == {expected_output}\n')
         else:
             raise ValueError(
                 f"------------- FAIL Тест: 1 --------\n"

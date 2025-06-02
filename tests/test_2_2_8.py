@@ -1,5 +1,13 @@
 # 2_2_8 тест для задачи
+from utils.code_security_check import check_code_safety
+
+
 def test_2_2_8(path_tmp_file: str, task_num_test: str):
+    # Безопасность кода пользователя: читаем код и проверяем его до запуска
+    with open(path_tmp_file, "r", encoding="utf-8") as f:
+        user_code = f.read()
+    check_code_safety(user_code)
+
     expected = "2.0"
     try:
         with open(path_tmp_file, 'r', encoding='utf-8') as file:

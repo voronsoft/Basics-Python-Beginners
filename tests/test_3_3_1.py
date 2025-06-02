@@ -1,7 +1,6 @@
 # 3_3_1 тест для задачи
 # 0_0_0 тест для задачи
 def test_3_3_1(*args):
-
     expected = dict(
         sorted(
             {

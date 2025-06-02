@@ -1,12 +1,17 @@
 # 3_7_5 тест для задачи
 import subprocess
 
+from utils.code_security_check import check_code_safety
+
 
 def test_3_7_5(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
     # Проверяем, содержит ли код список из задачи m = [2, 3, 5, 5, 2, 2, 3, 3, 4, 5, 4, 4]
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
+
+    # Проверка кода на безопасность
+    check_code_safety(user_code)
 
     string = "m = [2, 3, 5, 5, 2, 2, 3, 3, 4, 5, 4, 4]"
 

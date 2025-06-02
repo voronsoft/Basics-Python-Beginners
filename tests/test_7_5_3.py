@@ -1,51 +1,53 @@
 # 7_5_3 тест для задачи
+import ast
 import importlib.util
-import inspect
+
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_5_3(path_tmp_file: str, task_num_test: str):
-    """Тестирование функции get_biggest_city структуры:
-    - Проверка наличия функции get_biggest_city
-    - Проверка параметра tag
-    - Проверка значения параметра tag по умолчанию
-    """
+    """Тестирование структуры"""
 
     result = []  # Список для накопления результатов тестов
 
     try:
-        result.append(f"-------------Тест structure ------------")
+        result.append("-------------Тест structure -------------")
 
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
 
-        # Проверяем, что функция get_biggest_city присутствует
-        if not hasattr(user_module, "get_biggest_city"):
-            raise AttributeError("ОШИБКА функция 'get_biggest_city' не найдена в коде пользователя")
-        else:
-            result.append("Найдено: 'get_biggest_city'")
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
 
-        # Получаем функцию для работы с ней
-        func = user_module.get_biggest_city
+        find_func = False
+        find_varargs = False
 
-        # --- Проверка параметров функции ---
-        sig = inspect.signature(func)
-        params = sig.parameters
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                if node.name == "get_biggest_city":
+                    find_func = node.name
+                    # Проверяем наличие *args в аргументах функции
+                    if node.args.vararg:
+                        find_varargs = True
+                        arg_name = node.args.vararg.arg  # имя переменной (обычно 'args')
 
-        # --- Проверяем наличие параметра *args или подобный
-        var_positional_params = [name for name, p in params.items() if p.kind == inspect.Parameter.VAR_POSITIONAL]
+        if not find_func:
+            raise ValueError("ОШИБКА: Не найдена функция 'get_biggest_city'")
 
-        if var_positional_params:
-            result.append(f"Найдено: *{var_positional_params[0]}")
-        else:
-            raise ValueError("ОШИБКА: Не найден параметр *args")
+        if not find_varargs:
+            raise ValueError(
+                "ОШИБКА: Функция get_biggest_city должна принимать произвольное количество аргументов (*args)"
+            )
 
-        result.append("")
+        result.append(f"Функция найдена: '{find_func}' с параметром *{arg_name}")
+        result.append("--------------OK structure -------------\n")
 
-        # Запускаем вторую часть теста (выполнение кода пользователя)
+        # Дополнительно — тест выполнения кода
         try:
-            res = test_7_5_3_1(path_tmp_file, task_num_test)
+            res = test_7_5_3_1(path_tmp_file)
             result.append(res)
         except Exception as e:
             raise ValueError(str(e))
@@ -57,32 +59,30 @@ def test_7_5_3(path_tmp_file: str, task_num_test: str):
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
 
 
-def test_7_5_3_1(path_tmp_file: str, task_num_test: str):
+def test_7_5_3_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
-    test_input = (
-        ("Прага", "Вена", "Хельсинки", "Стамбул"),
-        ("Прага", "Вена", "Стамбул"),
-    )
+    test_input = (("Прага", "Вена", "Хельсинки", "Стамбул"), ("Прага", "Вена", "Стамбул"))
     # Ожидаемый результат
-    expected_output = (
-        "Хельсинки",
-        "Стамбул",
-    )
+    expected_output = ("Хельсинки", "Стамбул")
 
     result = []  # Список для накопления результатов тестов
 
     try:
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-        # Получаем функцию для работы с ней
-        func = user_module.get_biggest_city
-
         for i in range(len(test_input)):
-            # Вызываем функцию напрямую, передавая аргументы
-            output = func(*test_input[i])
+            spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
+            user_module = importlib.util.module_from_spec(spec)
+
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data="", capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
+
+            # Вызываем функцию
+            get_biggest_city = getattr(user_module, "get_biggest_city")
+            answer = get_biggest_city(*test_input[i])
 
             # Проверяем результат
             test_result = list()
@@ -90,14 +90,17 @@ def test_7_5_3_1(path_tmp_file: str, task_num_test: str):
             test_result.append(f"Входные данные: {test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
+            if captured_output:
+                raise RuntimeError("Ошибка: Вывод в консоль отключен")
+
             # Сравниваем результат с ожидаемым значением
-            if output == expected_output[i]:
-                test_result.append(f"Получено: {output}\n")
+            if answer == expected_output[i]:
+                test_result.append(f"Получено: {answer}\n")
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Входные данные: {test_input[i]}\n"
-                    f"Ожидалось: {expected_output[i]}\nно получен: {output}\n"
+                    f"Ожидалось: {expected_output[i]}\nно получен: {answer}\n"
                 )
 
             result.append("\n".join(test_result))

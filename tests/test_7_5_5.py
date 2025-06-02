@@ -1,71 +1,49 @@
 # 7_5_5 тест для задачи
+import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_5_5(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры"""
-
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-
-    # Подменяем stdin на фейковый с тестовыми данными
-    test_input = "1 0 0 0 0\n0 0 1 0 0\n0 0 0 0 0\n0 1 0 1 0\n0 0 0 0 0"
-    sys.stdin = StringIO(test_input)
-    # Заглушка для sys.stderr
-    original_stderr = sys.stderr  # сохраняем оригинал
-    sys.stderr = StringIO()  # подменяем на буфер
-
-    # Перенаправляем stdout, чтобы не засорять вывод тестов
-    sys.stdout = StringIO()
-
     result = []  # Список для накопления результатов тестов
 
     try:
-        result.append(f"-------------Тест structure ------------")
+        result.append("-------------Тест structure -------------")
 
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-        # Восстанавливаем оригинальные потоки
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+            # Проверка кода на безопасность
+            check_code_safety(user_code, allowed_imports=["sys"], allowed_calls=["sys.stdin.readlines"])
 
-        # Проверяем что есть необходимые атрибуты в коде пользователя
-        attr_search = {"verify": "function", "is_isolate": "function", "lst2D": "list"}  # предполагаемый тип для lst2D
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
 
-        for item, expected_type in attr_search.items():
-            if not hasattr(user_module, item):
-                raise AttributeError(f"ОШИБКА '{item}' не найден(а) в коде пользователя")
-            else:
-                # Получаем сам атрибут
-                attr = getattr(user_module, item)
-                # Получаем его тип
-                attr_type = type(attr).__name__
+        find_func = []
 
-                # Проверяем тип
-                if expected_type == "function":
-                    # Для функций проверяем, является ли атрибут вызываемым
-                    if not callable(attr):
-                        raise TypeError(f"ОШИБКА: '{item}' найден, но не является функцией (тип: {attr_type})")
-                    result.append(f"Найдено: '{item}' (тип: {attr_type})")
-                else:
-                    # Для других типов проверяем соответствие
-                    if attr_type != expected_type:
-                        raise TypeError(
-                            f"ОШИБКА: '{item}' имеет неверный тип. Ожидается {expected_type}, получен {attr_type}"
-                        )
-                    result.append(f"Найдено: '{item}' (тип: {attr_type})")
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                if node.name == "verify":
+                    find_func.append(node.name)
+                if node.name == "is_isolate":
+                    find_func.append(node.name)
 
-        result.append(f"--------------OK structure -------------\n")
+        if len(find_func) != 2:
+            raise RuntimeError("ОШИБКА: В коде необходимо объявить функции: 'verify' и 'is_isolate'")
 
-        # Запускаем вторую часть теста (выполнение кода пользователя)
+        result.append(f"Функции 'verify' и 'is_isolate' найдены")
+
+        if "lst2D" not in user_code:
+            raise RuntimeError("ОШИБКА: lst2D не найден")
+
+        result.append("lst2D найден")
+        result.append("--------------OK structure -------------\n")
+
+        # Дополнительно — тест выполнения кода
         try:
-            res = test_7_5_5_1(path_tmp_file, task_num_test)
+            res = test_7_5_5_1(path_tmp_file)
             result.append(res)
         except Exception as e:
             raise ValueError(str(e))
@@ -73,11 +51,12 @@ def test_7_5_5(path_tmp_file: str, task_num_test: str):
         return True, "\n".join(result)
 
     except Exception as e:
+        # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
-        raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
+        raise RuntimeError(f"Ошибка выполнения кода:\n\n{error_info}")
 
 
-def test_7_5_5_1(path_tmp_file: str, task_num_test: str):
+def test_7_5_5_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
     test_input = (
@@ -153,39 +132,32 @@ def test_7_5_5_1(path_tmp_file: str, task_num_test: str):
         False,
     )
 
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-
-    # Подменяем stdin на фейковый с тестовыми данными
-    fake_input = "1 0 0 0 0\n0 0 1 0 0\n0 0 0 0 0\n0 1 0 1 0\n0 0 0 0 0"
-    sys.stdin = StringIO(fake_input)
-    # Заглушка для sys.stderr
-    original_stderr = sys.stderr  # сохраняем оригинал
-    sys.stderr = StringIO()  # подменяем на буфер
-    # Перенаправляем stdout, чтобы не засорять вывод тестов
-    sys.stdout = StringIO()
-
     result = []  # Список для накопления результатов тестов
 
     try:
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-
-        # Проверяем работу атрибута lst2D (разово)
-        # Импортируем lst2D из модуля
-        lst2D = user_module.lst2D
-        if lst2D != test_input[0]:
-            raise AssertionError(f"lst2D сформирован неправильно:\nОжидалось: {test_input[0]}\nПолучено : {lst2D}")
-
-        # Получаем verify функцию для работы с ней
-        func = user_module.verify
-
         for i in range(len(test_input)):
-            # Вызываем функцию, передавая данные
-            output = func(test_input[i])
+            spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
+            user_module = importlib.util.module_from_spec(spec)
+
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(
+                stdin_data="0 1 0\n0 0 0\n1 0 1", capture_stdout=True, capture_stderr=True
+            ) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
+
+            # Проверка формирования lst2D разово
+            if i == 0:
+                # Получаем из модуля
+                lst2D = getattr(user_module, "lst2D")
+                if lst2D != test_input[2]:
+                    raise RuntimeError("ОШИБКА: Неправильно формируется 'lst2D'")
+
+            # Вызываем функцию
+            verify = getattr(user_module, "verify")
+            answer = verify(test_input[i])
 
             # Проверяем результат
             test_result = list()
@@ -194,13 +166,13 @@ def test_7_5_5_1(path_tmp_file: str, task_num_test: str):
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
             # Сравниваем результат с ожидаемым значением
-            if output == expected_output[i]:
-                test_result.append(f"Получено: {output}\n")
+            if answer == expected_output[i]:
+                test_result.append(f"Получено: {answer}\n")
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Входные данные:\n{test_input[i]}\n"
-                    f"Ожидалось: {expected_output[i]}\nно получен: {output}\n"
+                    f"Ожидалось: {expected_output[i]}\nно получен: {answer}\n"
                 )
 
             result.append("\n".join(test_result))
@@ -210,7 +182,3 @@ def test_7_5_5_1(path_tmp_file: str, task_num_test: str):
         # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения кода:\n\n{error_info}")
-    finally:
-        # Восстанавливаем потоки в исходное состояние
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout

@@ -69,7 +69,6 @@ def test_10_1_6_1(path_tmp_file: str):
 
             # Получаем из модуля answer
             answer = getattr(user_module, "answer")
-            print("answer", answer)
 
             # Формируем отчет по тесту
             test_result = []

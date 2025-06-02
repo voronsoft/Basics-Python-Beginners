@@ -1,13 +1,17 @@
 # 3_8_3 тест для задачи
 import subprocess
 
+from utils.code_security_check import check_code_safety
+
 
 def test_3_8_3(path_tmp_file: str, task_num_test: str):
     """Функция тестирования кода пользователя"""
     # Проверяем, есть ли в коде 'cities = ["Токио", "Берлин", "Париж"]'
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
-        print(user_code)
+
+    # Проверка кода на безопасность
+    check_code_safety(user_code)
 
     if 'cities = ["Токио", "Берлин", "Париж"]' not in user_code:
         raise ValueError(
