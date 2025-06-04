@@ -14,12 +14,12 @@ def test_7_12_4(path_tmp_file: str, task_num_test: str):
     try:
         result.append("-------------Тест structure -------------")
 
-        # Парсим AST
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
         # Безопасность кода пользователя: читаем код и проверяем его до запуска
         check_code_safety(code)
 
+        # Парсим AST
         tree = ast.parse(code)
 
         def analyze_get_list(tree_in):

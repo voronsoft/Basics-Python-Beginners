@@ -4,39 +4,34 @@ import sys
 
 from io import StringIO
 
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
+
 
 def test_7_6_7(path_tmp_file: str, task_num_test: str):
-    """Тестирование структуры кода:
-    - Проверка наличия menu, lst_in
-    - Проверка типов атрибутов
-    """
-
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-
-    # Подменяем stdin на фейковый с тестовыми данными
-    test_input = "Города=about-cities\nМашины=read-of-cars\nСамолеты=airplanes"
-    sys.stdin = StringIO(test_input)
-    # Заглушка для sys.stderr
-    original_stderr = sys.stderr  # сохраняем оригинал
-    sys.stderr = StringIO()  # подменяем на буфер
-
-    # Перенаправляем stdout, чтобы не засорять вывод тестов
-    sys.stdout = StringIO()
-
+    """Тестирование структуры кода"""
     result = []  # Список для накопления результатов тестов
 
     try:
+        with open(path_tmp_file, 'r', encoding='utf-8') as f:
+            user_code = f.read()
+        # Проверка кода на безопасность
+        check_code_safety(user_code, allowed_imports=["sys"], allowed_calls=["sys.stdin.readlines"])
+
         result.append(f"-------------Тест structure ------------")
+
+        test_input = "Города=about-cities\nМашины=read-of-cars\nСамолеты=airplanes"
 
         # Загружаем пользовательский модуль
         spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-        # Восстанавливаем оригинальные потоки
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
+
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data=test_input, capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+        # Получаем перехваченный вывод из stdout
+        captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
         # Проверяем что есть необходимые атрибуты в коде пользователя
         attr_search = {"menu": "dict", "lst_in": "list"}
@@ -65,7 +60,7 @@ def test_7_6_7(path_tmp_file: str, task_num_test: str):
 
         # Запускаем вторую часть теста (выполнение кода пользователя)
         try:
-            res = test_7_6_7_1(path_tmp_file, task_num_test)
+            res = test_7_6_7_1(path_tmp_file)
             result.append(res)
         except Exception as e:
             raise ValueError(str(e))
@@ -77,7 +72,7 @@ def test_7_6_7(path_tmp_file: str, task_num_test: str):
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
 
 
-def test_7_6_7_1(path_tmp_file: str, task_num_test: str):
+def test_7_6_7_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
     test_input = (

@@ -3,28 +3,22 @@ import ast
 import subprocess
 import sys
 
+from utils.code_security_check import check_code_safety
+
 
 def test_7_6_3(path_tmp_file: str, task_num_test: str):
-    """Функция тестирования кода пользователя"""
-    # Входные данные
-    test_input = (
-        "56 4 -23 2 0 3 5",
-        "1 2 3 4 5 6 7",
-        "10 20 30 40 50 60 70",
-    )
-    # Ожидаемый результат
-    expected_output = (
-        "56 4 -23 2",
-        "1 2 3 4",
-        "10 20 30 40",
-    )
+    """Тестирование структуры кода (наличие декоратора)"""
 
     result = []  # Список для накопления результатов тестов
 
     try:
-        # --- Проверка переменных x, y, z ---
+        result.append("-------------Тест structure -------------")
+
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
+
         # Парсим код в дерево
         tree = ast.parse(code)
         # Искомые переменные в коде
@@ -43,6 +37,41 @@ def test_7_6_3(path_tmp_file: str, task_num_test: str):
         missing_vars = required_vars - found_vars
         if missing_vars:
             raise ValueError(f"В коде отсутствуют обязательные переменные: {", ".join(missing_vars)}\n")
+
+        result.append(f"Найдены переменные: {found_vars}")
+
+        # Дополнительно — тест выполнения кода
+        try:
+            res = test_7_6_3_1(path_tmp_file)
+            result.append(res)
+        except Exception as e:
+            raise ValueError(str(e))
+
+        return True, "\n".join(result)
+
+    except Exception as e:
+        error_info = "\n".join(result) + f"\n{e}"
+        raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
+
+
+def test_7_6_3_1(path_tmp_file: str):
+    """Функция тестирования кода пользователя"""
+    # Входные данные
+    test_input = (
+        "56 4 -23 2 0 3 5",
+        "1 2 3 4 5 6 7",
+        "10 20 30 40 50 60 70",
+    )
+    # Ожидаемый результат
+    expected_output = (
+        "56 4 -23 2",
+        "1 2 3 4",
+        "10 20 30 40",
+    )
+
+    result = []  # Список для накопления результатов тестов
+
+    try:
 
         for i in range(len(test_input)):
             # Запускаем код пользователя, передавая ему входные данные через stdin
@@ -81,7 +110,7 @@ def test_7_6_3(path_tmp_file: str, task_num_test: str):
 
             result.append("\n".join(test_result))
 
-        return True, "\n".join(result)  # Возвращаем статус и результаты тестов
+        return "\n".join(result)  # Возвращаем статус и результаты тестов
     except Exception as e:
         # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"

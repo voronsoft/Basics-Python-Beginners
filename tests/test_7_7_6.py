@@ -1,91 +1,56 @@
 # 7_7_6 тест для задачи
 import ast
 import importlib.util
-import inspect
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_7_6(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры кода"""
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-
-    # Подменяем stdin на фейковый с тестовыми данными
-    test_input = "[6]"
-    sys.stdin = StringIO(test_input)
-    # Заглушка для sys.stderr
-    original_stderr = sys.stderr  # сохраняем оригинал
-    sys.stderr = StringIO()  # подменяем на буфер
-    # Перенаправляем stdout, чтобы не засорять вывод тестов
-    sys.stdout = StringIO()
 
     result = []  # Список для накопления результатов тестов
 
     try:
         result.append(f"-------------Тест structure ------------")
 
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-        # Восстанавливаем оригинальные потоки
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
 
-        # Проверяем что есть необходимые атрибуты в коде пользователя
-        attr_search = {"get_line_list": "function", "d": "list"}
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
 
-        for item, expected_type in attr_search.items():
-            if not hasattr(user_module, item):
-                raise AttributeError(f"ОШИБКА '{item}' не найден(а) в коде пользователя")
-            if item in attr_search:
-                # Получаем сам атрибут
-                attr = getattr(user_module, item)
-                # Получаем его тип
-                attr_type = type(attr).__name__
+        find_func = False
+        is_recursive = False
 
-                # Проверяем тип
-                if attr_type == expected_type:
-                    result.append(f"Найдено: '{item}' (тип: {attr_type})")
-                else:
-                    # Для других типов проверяем соответствие
-                    if attr_type != expected_type:
-                        raise TypeError(
-                            f"ОШИБКА: '{item}' имеет неверный тип. Ожидается {expected_type}, получен {attr_type}"
-                        )
-                    result.append(f"Найдено: '{item}' (тип: {attr_type})")
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.name == "get_line_list":
+                find_func = node.name
 
-                # ДОПОЛНЕНИЕ: Проверка рекурсивности функции get_line_list
-                if item == 'get_line_list' and attr_type == 'function':
-                    # Получаем исходный код функции
-                    source = inspect.getsource(attr)
-                    # Парсим в AST дерево
-                    tree = ast.parse(source)
-                    is_recursive = False
-
-                    # Ищем рекурсивные вызовы в теле функции
-                    for node in ast.walk(tree):
-                        if (
-                            isinstance(node, ast.Call)
-                            and isinstance(node.func, ast.Name)
-                            and node.func.id == 'get_line_list'
-                        ):
+                # Обход всех узлов внутри тела функции
+                for inner_node in ast.walk(node):
+                    # Ищем вызов этой же функции внутри неё самой
+                    if isinstance(inner_node, ast.Call):
+                        if isinstance(inner_node.func, ast.Name) and inner_node.func.id == "get_line_list":
                             is_recursive = True
                             break
+                break
 
-                    if is_recursive:
-                        result.append(f"Функция 'get_line_list': recursive")
-                    else:
-                        raise TypeError(f"ОШИБКА: '{item}' не является рекурсивной функцией")
+        if not find_func:
+            raise ValueError("ОШИБКА: Не найдена функция 'get_line_list'")
 
+        if not is_recursive:
+            raise TypeError(f"ОШИБКА: '{find_func}' не является рекурсивной функцией")
+
+        result.append(f"Функция найдена: '{find_func}'")
+        result.append(f"Функция 'get_line_list': recursive")
         result.append(f"--------------OK structure -------------\n")
 
         # Запускаем вторую часть теста (выполнение кода пользователя)
         try:
-            res = test_7_7_6_1(path_tmp_file, task_num_test)
+            res = test_7_7_6_1(path_tmp_file)
             result.append(res)
         except Exception as e:
             raise ValueError(str(e))
@@ -97,7 +62,7 @@ def test_7_7_6(path_tmp_file: str, task_num_test: str):
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
 
 
-def test_7_7_6_1(path_tmp_file: str, task_num_test: str):
+def test_7_7_6_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
 
     # Входные данные
@@ -118,26 +83,29 @@ def test_7_7_6_1(path_tmp_file: str, task_num_test: str):
             # Импортируем модуль пользователя
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(user_module)
+
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=" ", capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+            # Получаем функцию из модуля
+            get_line_list = getattr(user_module, "get_line_list")
+            # Вызываем функцию с тестовым вводом
+            answer = get_line_list(test_input[i])
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Проверяем результат
             test_result = list()
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
-            test_result.append(f"Входные данные:\n{test_input[i]}")
             test_result.append(f"Ожидалось:\n{expected_output[i]}")
 
-            # Получаем функцию get_line_list из модуля пользователя
-            user_func = getattr(user_module, 'get_line_list')
-            # Выполняем функцию
-            output = user_func(list(test_input[i]))
-
-            if output == expected_output[i]:
-                test_result.append(f"Получено:\n{output}\n")
+            if answer == expected_output[i]:
+                test_result.append(f"Получено:\n{answer}\n")
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
-                    f"Входные данные:\n{test_input[i]}\n"
-                    f"Ожидалось:\n{expected_output[i]}\nно получен:\n{output}\n"
+                    f"Ожидалось:\n{expected_output[i]}\nно получен:\n{answer}\n"
                 )
 
             result.append("\n".join(test_result))

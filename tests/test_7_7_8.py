@@ -1,80 +1,56 @@
 # 7_7_8 тест для задачи
 import ast
-import importlib.util
 import subprocess
 import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
 
 
 def test_7_7_8(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры кода"""
-
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-
-    # Подменяем stdin на фейковый с тестовыми данными
-    test_input = "8 11 -6 3 0 1 1"
-    sys.stdin = StringIO(test_input)
-    # Заглушка для sys.stderr
-    original_stderr = sys.stderr  # сохраняем оригинал
-    sys.stderr = StringIO()  # подменяем на буфер
-    # Перенаправляем stdout, чтобы не засорять вывод тестов
-    sys.stdout = StringIO()
 
     result = []  # Список для накопления результатов тестов
 
     try:
         result.append(f"-------------Тест structure ------------")
 
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-
-        # Восстанавливаем оригинальные потоки
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
-
-        # Получаем исходный код файла пользователя
         with open(path_tmp_file, "r", encoding="utf-8") as f:
-            source = f.read()
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
 
-        tree = ast.parse(source)
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
 
-        # Список всех функций
-        functions = [node for node in tree.body if isinstance(node, ast.FunctionDef)]
-        if not functions:
-            raise AttributeError("ОШИБКА: В коде не найдены функции")
+        find_func = False
+        is_recursive = False
 
-        recursive_functions = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                find_func = node.name
 
-        for func in functions:
-            func_name = func.name
-            is_recursive = False
+                # Обход всех узлов внутри тела функции
+                for inner_node in ast.walk(node):
+                    # Ищем вызов этой же функции внутри неё самой
+                    if isinstance(inner_node, ast.Call):
+                        if isinstance(inner_node.func, ast.Name) and inner_node.func.id == find_func:
+                            is_recursive = True
+                            break
+                break
 
-            # Проверка: есть ли в теле функции вызов самой себя (проверка на рекурсивный вызов)
-            for node in ast.walk(func):
-                if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-                    if node.func.id == func_name:
-                        is_recursive = True
-                        break
+        if not find_func:
+            raise ValueError("ОШИБКА: Не найдена функция в коде")
 
-            if is_recursive:
-                result.append(f"Функция '{func_name}': recursive")
-                recursive_functions.append(func_name)
-            else:
-                result.append(f"Функция '{func_name}' — не рекурсивная (допустимо)")
+        if not is_recursive:
+            raise TypeError(f"ОШИБКА: '{find_func}' не является рекурсивной функцией")
 
-        if not recursive_functions:
-            raise TypeError("ОШИБКА: не найдены рекурсивные функции")
-
+        result.append(f"Функция найдена: '{find_func}'")
+        result.append(f"Функция '{find_func}': recursive")
         result.append(f"--------------OK structure -------------\n")
 
         # Запускаем вторую часть теста (выполнение кода пользователя)
         try:
-            res = test_7_7_8_1(path_tmp_file, task_num_test)
+            res = test_7_7_8_1(path_tmp_file)
             result.append(res)
         except Exception as e:
             raise ValueError(str(e))
@@ -86,7 +62,7 @@ def test_7_7_8(path_tmp_file: str, task_num_test: str):
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
 
 
-def test_7_7_8_1(path_tmp_file: str, task_num_test: str):
+def test_7_7_8_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
     test_input = (

@@ -5,39 +5,34 @@ import sys
 
 from io import StringIO
 
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
+
 
 def test_7_6_6(path_tmp_file: str, task_num_test: str):
-    """Тестирование структуры кода:
-    - Проверка наличия a, b, lst
-    - Проверка типов атрибутов
-    """
-
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-
-    # Подменяем stdin на фейковый с тестовыми данными
-    test_input = "5.8 11.0 4.3\nРим Лима Париж Сидней"
-    sys.stdin = StringIO(test_input)
-    # Заглушка для sys.stderr
-    original_stderr = sys.stderr  # сохраняем оригинал
-    sys.stderr = StringIO()  # подменяем на буфер
-
-    # Перенаправляем stdout, чтобы не засорять вывод тестов
-    sys.stdout = StringIO()
-
+    """Тестирование структуры кода"""
     result = []  # Список для накопления результатов тестов
 
     try:
+        with open(path_tmp_file, 'r', encoding='utf-8') as f:
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
+
         result.append(f"-------------Тест structure ------------")
+
+        test_input = "5.8 11.0 4.3\nРим Лима Париж Сидней"
 
         # Загружаем пользовательский модуль
         spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-        # Восстанавливаем оригинальные потоки
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
+
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data=test_input, capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+        # Получаем перехваченный вывод из stdout
+        captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
         # Проверяем что есть необходимые атрибуты в коде пользователя
         attr_search = {"lst": "list"}
@@ -66,7 +61,7 @@ def test_7_6_6(path_tmp_file: str, task_num_test: str):
 
         # Запускаем вторую часть теста (выполнение кода пользователя)
         try:
-            res = test_7_6_6_1(path_tmp_file, task_num_test)
+            res = test_7_6_6_1(path_tmp_file)
             result.append(res)
         except Exception as e:
             raise ValueError(str(e))
@@ -78,7 +73,7 @@ def test_7_6_6(path_tmp_file: str, task_num_test: str):
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
 
 
-def test_7_6_6_1(path_tmp_file: str, task_num_test: str):
+def test_7_6_6_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
     test_input = (
@@ -115,7 +110,7 @@ def test_7_6_6_1(path_tmp_file: str, task_num_test: str):
 
             test_result = list()
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
-            test_result.append(f"Входные данные: {test_input[i]}")
+            test_result.append(f"Входные данные:\n{test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
             # Сравниваем результат с ожидаемым значением
@@ -125,7 +120,7 @@ def test_7_6_6_1(path_tmp_file: str, task_num_test: str):
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
-                    f"Входные данные: {test_input[i]}\n"
+                    f"Входные данные:\n{test_input[i]}\n"
                     f"Ожидалось: {expected_output[i]}\nно получен: {output}\n"
                 )
 
