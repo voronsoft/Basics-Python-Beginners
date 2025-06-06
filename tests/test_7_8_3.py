@@ -1,45 +1,38 @@
 # 7_8_3 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_8_3(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры кода"""
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-    # Подменяем stdin на фейковый с тестовыми данными
-    test_input = "6 5"
-    sys.stdin = StringIO(test_input)
-    # Заглушка для sys.stderr
-    original_stderr = sys.stderr  # сохраняем оригинал
-    sys.stderr = StringIO()  # подменяем на буфер
-    # Перенаправляем stdout, чтобы не засорять вывод тестов
-    sys.stdout = StringIO()
 
     result = []
 
     try:
         result.append(f"-------------Тест structure ------------")
 
-        # Загружаем пользовательский модуль
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
+
+        # Импортируем модуль пользователя
         spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-        # Восстановим стандартные потоки
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
+
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data=" ", capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
 
         # Проверяем что есть необходимые атрибуты в коде пользователя
         if not hasattr(user_module, "get_div"):
             raise AttributeError("ОШИБКА: переменная 'get_div' не найдена в коде пользователя")
 
-        # Читаем исходный код
-        with open(path_tmp_file, "r", encoding="utf-8") as f:
-            tree = ast.parse(f.read())
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
 
         lambda_found = False
 
@@ -51,7 +44,7 @@ def test_7_8_3(path_tmp_file: str, task_num_test: str):
                         if isinstance(node.value, ast.Lambda):
                             lambda_found = True
 
-                            # Проверка: один параметр
+                            # Проверка: 2 параметра
                             if len(node.value.args.args) != 2:
                                 raise ValueError("ОШИБКА: лямбда-функция должна иметь 2 параметра")
 
@@ -98,7 +91,15 @@ def test_7_8_3_1(path_tmp_file: str, task_num_test: str):
             # Импортируем модуль пользователя
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(user_module)
+
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=" ", capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+            # Получаем get_div из модуля пользователя
+            get_div = getattr(user_module, 'get_div')
+            # Вызываем функцию с тестовым вводом
+            answer = get_div(test_input[i])
 
             # Проверяем результат
             test_result = list()
@@ -106,18 +107,13 @@ def test_7_8_3_1(path_tmp_file: str, task_num_test: str):
             test_result.append(f"Входные данные: {test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
-            # Получаем get_div из модуля пользователя
-            user_func = getattr(user_module, 'get_div')
-
-            # Получаем результат
-            res = user_func(*test_input[i])
-            if res == expected_output[i]:
-                test_result.append(f"Получено: {res}\n")
+            if answer == expected_output[i]:
+                test_result.append(f"Получено: {answer}\n")
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Входные данные: {test_input[i]}\n"
-                    f"Ожидалось: {expected_output[i]}\nно получен: {res}\n"
+                    f"Ожидалось: {expected_output[i]}\nно получен: {answer}\n"
                 )
 
             result.append("\n".join(test_result))

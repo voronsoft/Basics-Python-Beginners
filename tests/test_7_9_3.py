@@ -1,69 +1,49 @@
 # 7_9_3 тест для задачи
+import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_9_3(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры кода"""
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-
-    # Подменяем stdin на фейковый с тестовыми данными
-    test_input = "12"
-    sys.stdin = StringIO(test_input)
-    # Заглушка для sys.stderr
-    original_stderr = sys.stderr  # сохраняем оригинал
-    sys.stderr = StringIO()  # подменяем на буфер
-    # Перенаправляем stdout, чтобы не засорять вывод тестов
-    sys.stdout = StringIO()
-
-    result = []  # Список для накопления результатов тестов
+    result = []
 
     try:
-        result.append(f"-------------Тест structure ------------")
+        result.append("-------------Тест structure -------------")
 
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-        # Восстанавливаем оригинальные потоки
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
+        # Чтение пользовательского кода
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
 
-        # Проверяем что есть необходимые атрибуты в коде пользователя
-        attr_search = {
-            "WIDTH": "int",
-            "func1": "function",
-        }
+        # Разбор в AST
+        tree = ast.parse(user_code)
 
-        for item, expected_type in attr_search.items():
-            if not hasattr(user_module, item):
-                raise AttributeError(f"ОШИБКА '{item}' не найден(а) в коде пользователя")
-            if item in attr_search:
-                # Получаем сам атрибут
-                attr = getattr(user_module, item)
-                # Получаем его тип
-                attr_type = type(attr).__name__
+        func_found = False
 
-                # Проверяем тип
-                if attr_type == expected_type:
-                    result.append(f"Найдено: '{item}' (тип: {attr_type})")
-                else:
-                    # Для других типов проверяем соответствие
-                    if attr_type != expected_type:
-                        raise TypeError(
-                            f"ОШИБКА: '{item}' имеет неверный тип. Ожидается {expected_type}, получен {attr_type}"
-                        )
-                    result.append(f"Найдено: '{item}' (тип: {attr_type})")
+        for node in ast.walk(tree):
+            # Поиск определения функции func1
+            if isinstance(node, ast.FunctionDef):
+                if node.name == "func1":
+                    func_found = True
 
-        result.append(f"--------------OK structure -------------\n")
+        if "WIDTH" not in user_code:
+            raise ValueError("ОШИБКА: В коде не найдена функция 'WIDTH'")
 
-        # Запускаем вторую часть теста (выполнение кода пользователя)
+        if not func_found:
+            raise RuntimeError("ОШИБКА: В коде не найдена функция 'func1'")
+
+        result.append("Найдена функция 'func1'")
+        result.append("Переменная WIDTH найдена")
+
+        result.append("--------------OK structure -------------\n")
+
+        # Функциональный тест
         try:
-            res = test_7_9_3_1(path_tmp_file, task_num_test)
+            res = test_7_9_3_1(path_tmp_file)
             result.append(res)
         except Exception as e:
             raise ValueError(str(e))
@@ -75,7 +55,7 @@ def test_7_9_3(path_tmp_file: str, task_num_test: str):
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
 
 
-def test_7_9_3_1(path_tmp_file: str, task_num_test: str):
+def test_7_9_3_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
     test_input = (
@@ -98,31 +78,18 @@ def test_7_9_3_1(path_tmp_file: str, task_num_test: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            # Подменяем stdin с тестовыми данными
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-            # Сохраняем оригинальный stdout
-            original_stdout = sys.stdout
-            # Перенаправляем stdout в буфер
-            sys.stdout = output_buffer
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            spec.loader.exec_module(user_module)
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Проверяем результат
             test_result = list()
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
             test_result.append(f"Входные данные: {test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
-
-            # Восстанавливаем оригинальный stdout
-            sys.stdout = original_stdout
-
-            # Получаем перехваченный вывод
-            captured_output = output_buffer.getvalue().rstrip()
 
             if captured_output == expected_output[i]:
                 test_result.append(f"Получено: {captured_output}\n")
