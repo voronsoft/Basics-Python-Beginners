@@ -100,10 +100,6 @@ def test_7_12_1_1(path_tmp_file: str, fnc_name, dec_name):
             # Используем контекстный менеджер для подмены потоков
             with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
                 spec.loader.exec_module(user_module)
-                # Получаем функцию из модуля
-                func = getattr(user_module, fnc_name)
-                # Выполняем функцию
-                func(test_input[i])
                 # Получаем перехваченный вывод из stdout
                 captured_output = streams["stdout"].getvalue().rstrip()
 
