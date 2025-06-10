@@ -1,36 +1,35 @@
 # 7_10_2 тест для задачи
 import importlib.util
 import inspect
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_10_2(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры кода (наличие замыкания)"""
 
-    # Сохраняем оригинальные потоки ввода/вывода
-    original_stdin = sys.stdin
-    original_stdout = sys.stdout
-    original_stderr = sys.stderr
-    # Подменяем stdin на фейковый с тестовыми данными
-    sys.stdin = StringIO("0")
-    sys.stderr = StringIO()
-    sys.stdout = StringIO()
-
     result = []  # Список для накопления результатов тестов
 
     try:
+        # Чтение пользовательского кода
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            user_code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(user_code)
+
         result.append(f"-------------Тест structure ------------")
 
-        # Загружаем пользовательский модуль
+        # Импортируем модуль пользователя
         spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
 
-        # Восстанавливаем потоки
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data="0", capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+        # Получаем перехваченный вывод из stdout
+        captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
         # Проверка наличия функции counter_add
         if not hasattr(user_module, "counter_add"):
@@ -65,7 +64,7 @@ def test_7_10_2(path_tmp_file: str, task_num_test: str):
 
         # Дополнительно — тест выполнения кода
         try:
-            res = test_7_10_2_1(path_tmp_file, task_num_test)
+            res = test_7_10_2_1(path_tmp_file)
             result.append(res)
         except Exception as e:
             raise ValueError(str(e))
@@ -73,14 +72,12 @@ def test_7_10_2(path_tmp_file: str, task_num_test: str):
         return True, "\n".join(result)
 
     except Exception as e:
-        # Восстанавливаем потоки в случае ошибки
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
+        # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
-        raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
+        raise RuntimeError(f"Ошибка выполнения кода:\n\n{error_info}")
 
 
-def test_7_10_2_1(path_tmp_file: str, task_num_test: str):
+def test_7_10_2_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
     test_input = (
@@ -105,20 +102,12 @@ def test_7_10_2_1(path_tmp_file: str, task_num_test: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            # Подменяем stdin с тестовыми данными
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-            # Сохраняем оригинальный stdout
-            original_stdout = sys.stdout
-            # Перенаправляем stdout в буфер
-            sys.stdout = output_buffer
-
-            spec.loader.exec_module(user_module)
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Проверяем результат
             test_result = list()
@@ -126,19 +115,14 @@ def test_7_10_2_1(path_tmp_file: str, task_num_test: str):
             test_result.append(f"Входные данные: {test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
-            # Восстанавливаем оригинальный stdout
-            sys.stdout = original_stdout
-
-            # Получаем перехваченный вывод из print()
-            captured_output = output_buffer.getvalue().rstrip()
-
-            # Получаем функцию (cnt)
-            cnt = getattr(user_module, 'cnt', None)
+            # Получаем функцию cnt из модуля пользователя
+            counter_add = getattr(user_module, 'counter_add')
             # Получаем результат работы функции при прямом обращении
-            answ = cnt(int(test_input[i]))
+            func = counter_add(2)
+            cnt = func(int(test_input[i]))
 
             # Проверяем результат перехваченного вывода and результат работы функции при прямом обращении
-            if captured_output == expected_output[i] and answ == int(expected_output[i]):
+            if captured_output == expected_output[i] and cnt == int(expected_output[i]):
                 test_result.append(f"Получено: {captured_output}\n")
             else:
                 raise ValueError(

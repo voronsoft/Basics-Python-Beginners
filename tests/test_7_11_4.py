@@ -1,9 +1,9 @@
 # 7_11_4 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_11_4(path_tmp_file: str, task_num_test: str):
@@ -14,13 +14,17 @@ def test_7_11_4(path_tmp_file: str, task_num_test: str):
     try:
         result.append("-------------Тест structure -------------")
 
-        # Чтение и разбор кода
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
+
+        # Парсим код в дерево
         tree = ast.parse(code)
 
         # Ищем все функции, у которых есть декораторы
         decorated_funcs = []
+
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef) and node.decorator_list:
                 decorated_funcs.append((node.name, len(node.args.args)))
@@ -81,20 +85,12 @@ def test_7_11_4_1(path_tmp_file: str, fnc_name):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            # Подменяем stdin с тестовыми данными
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-            # Сохраняем оригинальный stdout
-            original_stdout = sys.stdout
-            # Перенаправляем stdout в буфер
-            sys.stdout = output_buffer
-
-            spec.loader.exec_module(user_module)
+                # Получаем перехваченный вывод из stdout
+                captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Проверяем результат
             test_result = list()
@@ -102,25 +98,12 @@ def test_7_11_4_1(path_tmp_file: str, fnc_name):
             test_result.append(f"Входные данные:\n{test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
-            # Восстанавливаем оригинальный stdout
-            sys.stdout = original_stdout
-
-            func = getattr(user_module, fnc_name)  # Получаем функцию из модуля
-            # Выполняем функцию
-            a, b = test_input[i].split("\n")
-            func(a, b)
-            # Получаем перехваченный вывод из print()
-            captured_output = output_buffer.getvalue().rstrip()
-            # Восстанавливаем оригинальный stdout
-            sys.stdout = original_stdout
-
-            # Проверяем результат перехваченного вывода
             if captured_output == expected_output[i]:
                 test_result.append(f"Получено: {captured_output}\n")
             else:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
-                    f"Входные данные: {test_input[i]}\n"
+                    f"Входные данные:\n{test_input[i]}\n"
                     f"Ожидалось: {expected_output[i]}\nно получен: {captured_output}\n"
                 )
 

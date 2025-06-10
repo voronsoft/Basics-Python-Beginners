@@ -2,9 +2,9 @@
 import ast
 import importlib.util
 import inspect
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_7_11_1(path_tmp_file: str, task_num_test: str):
@@ -13,16 +13,24 @@ def test_7_11_1(path_tmp_file: str, task_num_test: str):
     result = []
 
     try:
-        result.append("-------------Тест structure -------------")
-
-        # Загружаем пользовательский модуль
-        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
-        user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
-
-        # Разбираем код с использованием ast читаем код из файла
+        # Чтение пользовательского кода
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
+
+        result.append(f"-------------Тест structure ------------")
+
+        # Импортируем модуль пользователя
+        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
+        user_module = importlib.util.module_from_spec(spec)
+
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data="8 11", capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+        # Получаем перехваченный вывод из stdout
+        captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
         # Парсим код в дерево
         tree = ast.parse(code)
@@ -92,29 +100,23 @@ def test_7_11_1_1(path_tmp_file: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-            # Сохраняем оригинальный stdout
-            original_stdout = sys.stdout
-            # Перенаправляем stdout в буфер
-            sys.stdout = output_buffer
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=" ", capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            spec.loader.exec_module(user_module)
+                get_sq = getattr(user_module, "get_sq")  # Получаем функцию из модуля
+                width, height = test_input[i]  # Готовим тестовые данные для передачи в функцию
+                # Выполняем функцию
+                get_sq(width, height)
+
+                # Получаем перехваченный вывод из stdout
+                captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Проверяем результат
             test_result = list()
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
             test_result.append(f"Входные данные: {test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
-
-            get_sq = getattr(user_module, "get_sq")  # Получаем функцию из модуля
-            width, height = test_input[i]  # Готовим тестовые данные для передачи в функцию
-            # Выполняем функцию
-            get_sq(width, height)
-            # Получаем перехваченный вывод из print()
-            captured_output = output_buffer.getvalue().rstrip()
-            # Восстанавливаем оригинальный stdout
-            sys.stdout = original_stdout
 
             # Проверяем результат перехваченного вывода
             if captured_output == expected_output[i]:

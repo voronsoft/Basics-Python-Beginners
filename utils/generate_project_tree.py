@@ -33,10 +33,7 @@ def create_project_tree_files(
         try:
             entries = sorted(
                 [e for e in path.iterdir() if not is_ignored(e)],
-                key=lambda x: (
-                    not x.is_dir(),
-                    x.name.lower()
-                ),
+                key=lambda x: (not x.is_dir(), x.name.lower()),
             )
         except PermissionError:
             return lines
