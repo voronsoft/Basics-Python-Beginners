@@ -1,9 +1,9 @@
 # 9_1_2 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_9_1_2(path_tmp_file: str, task_num_test: str):
@@ -17,6 +17,8 @@ def test_9_1_2(path_tmp_file: str, task_num_test: str):
         # Считываем код из временного файла
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
 
         # Преобразуем код в AST
         tree = ast.parse(code)
@@ -67,23 +69,24 @@ def test_9_1_2(path_tmp_file: str, task_num_test: str):
 
 def test_9_1_2_1(path_tmp_file: str):
     """Тест генератора и кортежа квадратов в диапазоне [a; b]"""
-    result = []
+    # Входные данные
+    test_input = "3 7"  # Значит, ожидаем квадраты: 9, 16, 25, 36, 49
+    # Ожидаемый результат
+    expected_output = tuple(x**2 for x in range(3, 8))
+
+    result = []  # Список для накопления результатов тестов
 
     try:
-        # Подставим входные данные
-        test_input = "3 7"  # Значит, ожидаем квадраты: 9, 16, 25, 36, 49
-        expected_output = tuple(x**2 for x in range(3, 8))
-
-        # Подменяем stdin
-        sys.stdin = StringIO(test_input)
-        # Заглушка для sys.stderr
-        original_stderr = sys.stderr  # сохраняем оригинал
-        sys.stderr = StringIO()  # подменяем на буфер
-
-        # Импортируем модуль пользователя заново
-        spec = importlib.util.spec_from_file_location("user_code", path_tmp_file)
+        # Импортируем модуль пользователя
+        spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
+
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data=test_input, capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+        # Получаем перехваченный вывод из stdout
+        captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
         # Проверяем наличие переменной
         if not hasattr(user_module, "tp"):
@@ -100,8 +103,6 @@ def test_9_1_2_1(path_tmp_file: str):
             raise ValueError(
                 f"------------- FAIL Тест --------\n"
                 f"Входные данные: {test_input}\n"
-                f"Ожидалось: {expected_output}\n"
-                f"Получено: {tp}"
                 f"Ожидалось: {expected_output}\nно получен: {tp}"
             )
 

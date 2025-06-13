@@ -2,6 +2,9 @@
 import ast
 import importlib.util
 
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
+
 
 def test_9_1_1(path_tmp_file: str, task_num_test: str):
     """Тестирование структуры"""
@@ -14,6 +17,8 @@ def test_9_1_1(path_tmp_file: str, task_num_test: str):
         # Считываем код из временного файла
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
 
         # Преобразуем код в AST
         tree = ast.parse(code)
@@ -72,7 +77,13 @@ def test_9_1_1_1(path_tmp_file: str):
         # Импортируем модуль пользователя
         spec = importlib.util.spec_from_file_location("user_code", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(user_module)
+
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data=" ", capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
+
+        # Получаем перехваченный вывод из stdout
+        captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
         # Проверяем, что переменная 'gen' существует
         if not hasattr(user_module, "gen"):
