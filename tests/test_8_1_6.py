@@ -1,9 +1,9 @@
 # 8_1_6 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_8_1_6(path_tmp_file: str, task_num_test: str):
@@ -14,8 +14,13 @@ def test_8_1_6(path_tmp_file: str, task_num_test: str):
     try:
         result.append("-------------Тест structure -------------")
 
+        # Чтение и разбор кода
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
+
+        # Парсим код в дерево
         tree = ast.parse(code)
 
         def has_correct_import(tree_in):
@@ -95,37 +100,26 @@ def test_8_1_6_1(path_tmp_file: str):
     result = []
 
     try:
-        i = 0  # Номер теста
-
-        # Импортируем модуль из файла
+        # Импортируем модуль пользователя
         spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
 
-        # Сохраняем оригинальные потоки
-        original_stdin = sys.stdin
-        original_stdout = sys.stdout
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data=" ", capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-        # Подменяем ввод и вывод
-        sys.stdin = StringIO("")
-        # Заглушка для sys.stderr
-        original_stderr = sys.stderr  # сохраняем оригинал
-        sys.stderr = StringIO()  # подменяем на буфер
-        output_buffer = StringIO()
-        sys.stdout = output_buffer
+        # Получаем перехваченный вывод из stdout
+        captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
-        # Выполняем код пользователя
-        spec.loader.exec_module(user_module)
-
-        # Считываем перехваченный вывод
-        captured_output = output_buffer.getvalue().strip()
-
-        # Восстанавливаем потоки
-        sys.stdout = original_stdout
-        sys.stdin = original_stdin
+        # Проверяем результат
+        test_result = list()
+        test_result.append(f"---------------OK Тест --------------")
+        test_result.append(f"Ожидалось: {expected_output}")
+        test_result.append(f"Получено: {captured_output}")
 
         # Готовим отчёт
         test_result = [
-            f"---------------OK Тест: {i + 1} --------------",
+            f"---------------OK Тест --------------",
             f"Ожидалось: {expected_output}",
             f"Получено: {captured_output}",
         ]
@@ -134,12 +128,12 @@ def test_8_1_6_1(path_tmp_file: str):
             result.append("\n".join(test_result))
         else:
             raise ValueError(
-                f"------------- FAIL Тест: {i + 1} --------\n"
-                f"Ожидалось: {expected_output}\nно получено: {captured_output}\n"
+                f"------------- FAIL Тест --------\n" f"Ожидалось: {expected_output}\nно получено: {captured_output}\n"
             )
 
         return "\n".join(result)
 
     except Exception as e:
+        # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения кода:\n{error_info}")

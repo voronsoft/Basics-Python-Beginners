@@ -1,9 +1,9 @@
 # 8_1_5 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_8_1_5(path_tmp_file: str, task_num_test: str):
@@ -16,6 +16,10 @@ def test_8_1_5(path_tmp_file: str, task_num_test: str):
 
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
+
+        # Парсим код в дерево
         tree = ast.parse(code)
 
         def has_correct_import(tree_in):
@@ -57,7 +61,7 @@ def test_8_1_5(path_tmp_file: str, task_num_test: str):
         if not has_correct_import(tree):
             raise ValueError("ОШИБКА: Нет правильного импорта: from random import seed, randint.")
         if not calls_seed_and_randint(tree):
-            raise ValueError("ОШИБКА: Не найдены вызовы seed(1) и print(randint(10, 50)).")
+            raise ValueError("ОШИБКА: Не найдены вызовы seed(1) или print(randint(10, 50)).")
 
         result.append("Импорт: from random import seed, randint — OK")
         result.append("Вызов seed(1) и print(randint(10, 50)) — OK")
@@ -86,34 +90,20 @@ def test_8_1_5_1(path_tmp_file: str):
     result = []  # Список для накопления результатов тестов
 
     try:
-        i = 0  # Один тест, без входных данных
-
         # Импортируем модуль пользователя
         spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
 
-        # Сохраняем оригинальный stdin
-        original_stdin = sys.stdin
-        # Подменяем stdin на заглушку
-        sys.stdin = StringIO("")
-        # Заглушка для sys.stderr
-        original_stderr = sys.stderr  # сохраняем оригинал
-        sys.stderr = StringIO()  # подменяем на буфер
-        # Перехватываем вывод
-        output_buffer = StringIO()
-        original_stdout = sys.stdout
-        sys.stdout = output_buffer
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data=" ", capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-        # Выполняем пользовательский код
-        spec.loader.exec_module(user_module)
+        # Получаем перехваченный вывод из stdout
+        captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
-        # Получаем вывод
-        captured_output = output_buffer.getvalue().strip()
-        sys.stdout = original_stdout  # Восстанавливаем stdout
-
-        # Подготовка отчёта
+        # Проверяем результат
         test_result = list()
-        test_result.append(f"---------------OK Тест: {i + 1} --------------")
+        test_result.append(f"---------------OK Тест --------------")
         test_result.append(f"Ожидалось: {expected_output}")
         test_result.append(f"Получено: {captured_output}")
 
@@ -122,14 +112,12 @@ def test_8_1_5_1(path_tmp_file: str):
             result.append("\n".join(test_result))
         else:
             raise ValueError(
-                f"------------- FAIL Тест: {i + 1} --------\n"
-                f"Ожидалось: {expected_output}\nно получено: {captured_output}\n"
+                f"------------- FAIL Тест --------\n" f"Ожидалось: {expected_output}\nно получено: {captured_output}\n"
             )
-        # Восстанавливаем поток ввода в исходное состояние
-        sys.stdin = original_stdin
 
         return "\n".join(result)
 
     except Exception as e:
+        # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
-        raise RuntimeError(f"Ошибка выполнения кода:\n{error_info}")
+        raise RuntimeError(f"Ошибка выполнения кода:\n\n{error_info}")
