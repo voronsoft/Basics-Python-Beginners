@@ -52,7 +52,7 @@ tasks_video_links = {
     'vid_7.6 Операторы * и ** для упаковки и распаковки коллекций': 'https://www.youtube.com/watch?v=D6-d5yWOBd0',
     'vid_7.7 Рекурсивные функции': 'https://www.youtube.com/watch?v=dtzoBXL11oo',
     'vid_7.7-1 Рекурсивные функции ч2': 'https://www.youtube.com/watch?v=yQn6wBKAjHA',
-    'vid_7.7-2 Хвостовая рекурсия': 'https://www.youtube.com/watch?v=j1POU2EY7VQ',
+    'vid_7.7-2 Хвостовая рекурсия': 'https://www.youtube.com/watch?v=jvVhV35uIRs',
     'vid_7.8 Анонимные (lambda) функции': 'https://www.youtube.com/watch?v=UAYeh7pSqXw',
     'vid_7.9 Области видимости переменных. Ключевые слова global и nonlocal': 'https://www.youtube.com/watch?v=TacyWpUF1Kk',
     'vid_7.10 Замыкания в Python': 'https://www.youtube.com/watch?v=sJF7OMNgLUs',
@@ -86,4 +86,3 @@ tasks_video_links = {
     'vid_10.11 Аннотации типов на уровне классов': 'https://www.youtube.com/watch?v=Wq7XfZTrATU',
     'vid_10.12 Моржовая операция присваивания (walrus operator)': 'https://www.youtube.com/watch?v=PYLQkzar6bo&t',
 }
-# https://www.youtube.com/watch?v=PYLQkzar6bo&t
