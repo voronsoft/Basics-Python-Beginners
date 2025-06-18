@@ -20,7 +20,7 @@ def test_9_1_9(path_tmp_file: str, task_num_test: str):
         # Безопасность кода пользователя: читаем код и проверяем его до запуска
         check_code_safety(code)
 
-        # Преобразуем код в AST
+        # Разбор кода в дерево AST
         tree = ast.parse(code)
 
         # Контейнеры для найденных генераторов

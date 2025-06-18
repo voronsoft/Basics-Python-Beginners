@@ -19,7 +19,7 @@ def test_8_1_2(path_tmp_file: str, task_num_test: str):
         # Безопасность кода пользователя: читаем код и проверяем его до запуска
         check_code_safety(code)
 
-        # Парсим код в дерево
+        # Разбор кода в дерево AST
         tree = ast.parse(code)
 
         def has_math_import(tree_in):
