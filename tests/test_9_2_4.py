@@ -1,9 +1,9 @@
 # 9_2_4 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_9_2_4(path_tmp_file: str, task_num_test: str):
@@ -17,6 +17,8 @@ def test_9_2_4(path_tmp_file: str, task_num_test: str):
         # Считываем код из временного файла
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
 
         # Преобразуем код в AST
         tree = ast.parse(code)
@@ -84,7 +86,7 @@ def test_9_2_4_1(path_tmp_file: str, generator_funcs: str):
     )
     # Ожидаемый результат при прямом выполнении
     expected_output2 = (
-        ('RnBUb@mail.ru', 'HoWCF@mail.ru', 'JowoR@mail.ru', 'oWDsb@mail.ru', 'AJPgl@mail.ru'),
+        ('RnBUbHoW@mail.ru', 'CFJowoRo@mail.ru', 'WDsbAJPg@mail.ru', 'lOUshVvU@mail.ru', 'TGBGQmts@mail.ru'),
         ('CrUZo@mail.ru', 'Lgubb@mail.ru', 'bPIay@mail.ru', 'RnBUb@mail.ru', 'HoWCF@mail.ru'),
     )
 
@@ -96,24 +98,12 @@ def test_9_2_4_1(path_tmp_file: str, generator_funcs: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            # Подменяем stdin с тестовыми данными
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-            # Сохраняем оригинальный stdout
-            original_stdout = sys.stdout
-            # Перенаправляем stdout в буфер
-            sys.stdout = output_buffer
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            spec.loader.exec_module(user_module)
-
-            # Получаем перехваченный вывод из print()
-            captured_output = output_buffer.getvalue().rstrip()
-            # Восстанавливаем оригинальный stdout
-            sys.stdout = original_stdout
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Проверяем результат
             test_result = list()
@@ -121,9 +111,6 @@ def test_9_2_4_1(path_tmp_file: str, generator_funcs: str):
             test_result.append(f"Входные данные: {test_input[i]}")
             test_result.append(f"Ожидалось:\n{expected_output[i]}\n")
 
-            funcs = getattr(user_module, generator_funcs)  # Получаем функцию из модуля
-            # Выполняем функцию, что бы получить первые 5ть результатов для проверки
-            answer = tuple(next(funcs(5)) for _ in range(5))
             # Проверяем результат
             if captured_output == expected_output[i]:
                 test_result.append(f"Получено:\n{captured_output}\n")
@@ -133,6 +120,11 @@ def test_9_2_4_1(path_tmp_file: str, generator_funcs: str):
                     f"Входные данные: {test_input[i]}\n"
                     f"Ожидалось:\n{expected_output[i]}\nно получен:\n{captured_output}\n"
                 )
+
+            # Получаем функцию из модуля
+            funcs = getattr(user_module, generator_funcs)
+            # Выполняем функцию, что бы получить первые 5ть результатов для проверки
+            answer = tuple(next(funcs(int(test_input[i]))) for _ in range(5))
 
             if answer != expected_output2[i]:
                 raise ValueError(

@@ -1,9 +1,9 @@
 # 9_2_5 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_9_2_5(path_tmp_file: str, task_num_test: str):
@@ -17,8 +17,10 @@ def test_9_2_5(path_tmp_file: str, task_num_test: str):
         # Считываем код из временного файла
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
 
-        # Преобразуем код в AST
+        # Разбор кода в дерево AST
         tree = ast.parse(code)
 
         # Контейнеры для найденных генераторов
@@ -75,7 +77,7 @@ def test_9_2_5_1(path_tmp_file: str, generator_funcs: str):
     # Ожидаемый результат
     stdout_output = '2 3 5 7 11 13 17 19 23 29'
     # Ожидаемый результат при прямом выполнении
-    yield_output = (2, 3, 5, 7, 11)
+    yield_output = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
 
     result = []  # Список для накопления результатов тестов
 
@@ -84,48 +86,33 @@ def test_9_2_5_1(path_tmp_file: str, generator_funcs: str):
         spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
         user_module = importlib.util.module_from_spec(spec)
 
-        # Подменяем stdin с тестовыми данными
-        sys.stdin = StringIO(test_input)
-        # Заглушка для sys.stderr
-        original_stderr = sys.stderr  # сохраняем оригинал
-        sys.stderr = StringIO()  # подменяем на буфер
-        # Создаем буфер для перехвата вывода
-        output_buffer = StringIO()
-        # Сохраняем оригинальный stdout
-        original_stdout = sys.stdout
-        # Перенаправляем stdout в буфер
-        sys.stdout = output_buffer
+        # Используем контекстный менеджер для подмены потоков
+        with stream_interceptor(stdin_data=test_input, capture_stdout=True, capture_stderr=True) as streams:
+            spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-        spec.loader.exec_module(user_module)
-
-        # Получаем перехваченный вывод из print()
-        captured_output = output_buffer.getvalue().rstrip()
-        # Восстанавливаем оригинальный stdout
-        sys.stdout = original_stdout
+        # Получаем перехваченный вывод из stdout
+        captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
         # Проверяем результат
         test_result = list()
-        test_result.append(f"-------OK Тест: 1 (вывод print())-------")
+        test_result.append(f"--------------OK Тест: 1 (вывод print())-------")
         test_result.append(f"Ожидалось: {stdout_output}\n")
 
-        funcs = getattr(user_module, generator_funcs)  # Получаем функцию из модуля
+        # Получаем функцию из модуля
+        funcs = getattr(user_module, generator_funcs)
         g = funcs()
-        print("funcs", type(funcs))
-        print("g", type(g))
-        # Выполняем функцию, что бы получить первые 5ть результатов для проверки
-        answer = tuple(next(g) for _ in range(5))
-        print("answer", answer)
+        # Выполняем функцию, что бы получить первые 10ть результатов для проверки
+        answer = tuple(next(g) for _ in range(10))
 
         # Проверяем результат
         if captured_output == stdout_output:
             test_result.append(f"Получено: {captured_output}\n")
         else:
             raise ValueError(
-                f"------------- FAIL Тест --------\n"
-                f"Ожидалось: {stdout_output}\nно получен: {captured_output}\n"
+                f"-------------- FAIL Тест --------\n" f"Ожидалось: {stdout_output}\nно получен: {captured_output}\n"
             )
         if answer == yield_output:
-            test_result.append(f"---------------OK Тест: 2 --------------\n")
+            test_result.append(f"-------------OK Тест: 2 (что возвращает функция)--------------\n")
             test_result.append(f"Ожидалось: {yield_output}\n")
             test_result.append(f"Получено: {answer}\n")
 
