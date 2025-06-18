@@ -1,11 +1,41 @@
 # 9_3_4 тест для задачи
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
-def test_9_3_4(path_tmp_file: str, generator_funcs: str):
+def test_9_3_4(path_tmp_file: str, task_num_test: str):
+    """Тестирование структуры"""
+
+    result = []
+
+    try:
+        result.append("-------------Тест structure -------------")
+
+        # Считываем код из временного файла
+        with open(path_tmp_file, "r", encoding="utf-8") as f:
+            code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
+
+        result.append("--------------OK structure -------------\n")
+
+        # Дополнительно — тест выполнения кода
+        try:
+            res = test_9_3_4_1(path_tmp_file)
+            result.append(res)
+        except Exception as e:
+            raise ValueError(str(e))
+
+        return True, "\n".join(result)
+
+    except Exception as e:
+        error_info = "\n".join(result) + f"\n{e}"
+        raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
+
+
+def test_9_3_4_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
     test_input = (
@@ -25,24 +55,12 @@ def test_9_3_4(path_tmp_file: str, generator_funcs: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            # Подменяем stdin с тестовыми данными
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-            # Сохраняем оригинальный stdout
-            original_stdout = sys.stdout
-            # Перенаправляем stdout в буфер
-            sys.stdout = output_buffer
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            spec.loader.exec_module(user_module)
-
-            # Получаем перехваченный вывод из print()
-            captured_output = output_buffer.getvalue().rstrip()
-            # Восстанавливаем оригинальный stdout
-            sys.stdout = original_stdout
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Проверяем результат
             test_result = list()
@@ -50,8 +68,9 @@ def test_9_3_4(path_tmp_file: str, generator_funcs: str):
             test_result.append(f"Входные данные: {test_input[i]}")
             test_result.append(f"Ожидалось: {expected_output[i]}")
 
-            tp = getattr(user_module, "tp")  # Получаем функцию из модуля
-            # Выполняем функцию, что бы получить первые 5ть результатов для проверки.
+            # Получаем переменную из модуля
+            tp = getattr(user_module, "tp")
+
             # Проверяем результат
             if tp == expected_output[i]:
                 test_result.append(f"Получено: {tp}\n")
@@ -59,19 +78,12 @@ def test_9_3_4(path_tmp_file: str, generator_funcs: str):
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
                     f"Входные данные: {test_input[i]}\n"
-                    f"Ожидалось:\n{expected_output[i]}\nно получен:\n{tp}\n"
-                )
-
-            if tp != expected_output[i]:
-                raise ValueError(
-                    f"------------- FAIL Тест проверка что возвращает функция: {i + 1} --------\n"
-                    f"Входные данные: {test_input[i]}\n"
                     f"Ожидалось: {expected_output[i]}\nно получен: {tp}\n"
                 )
 
             result.append("\n".join(test_result))
 
-        return True, "\n".join(result)  # Возвращаем статус и результаты тестов
+        return "\n".join(result)  # Возвращаем статус и результаты тестов
     except Exception as e:
         # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"

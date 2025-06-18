@@ -1,9 +1,9 @@
 # 9_3_3 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_9_3_3(path_tmp_file: str, task_num_test: str):
@@ -15,9 +15,13 @@ def test_9_3_3(path_tmp_file: str, task_num_test: str):
         result.append("-------------Тест structure -------------")
 
         with open(path_tmp_file, "r", encoding="utf-8") as f:
-            code = f.read()
+            user_code = f.read()
 
-        tree = ast.parse(code)
+        # Проверка кода на безопасность
+        check_code_safety(user_code, allowed_imports=["sys"], allowed_calls=["sys.stdin.readlines"])
+
+        # Разбор кода в дерево AST
+        tree = ast.parse(user_code)
 
         lst_in_found = False
         lst2D_found = False
@@ -93,57 +97,33 @@ def test_9_3_3_1(path_tmp_file: str):
 
     try:
         for i in range(len(test_input)):
-            # Импортируем модуль из файла
+            # Импортируем модуль пользователя
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            # Подмена stdin (ввод)
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            # Запускаем пользовательский код
-            spec.loader.exec_module(user_module)
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
-            # Теперь проверим, что переменная lst2D существует и является списком
-            if not hasattr(user_module, "lst2D"):
-                raise ValueError(f"ОШИБКА: Переменная 'lst2D' не найдена в модуле.")
+            # Сборка отчёта по тесту
+            test_result = []
+            test_result.append(f"---------------OK Тест: {i + 1} --------------")
+            test_result.append(f"Входные данные:\n{test_input[i]}")
+            test_result.append(f"Ожидалось: {expected_output[i]}")
+            # test_result.append(f"Получено: {lst2D}\n")
 
-            lst2D = user_module.lst2D
-
-            # Проверка, что lst2D — это список
-            if not isinstance(lst2D, list):
-                raise ValueError(f"ОШИБКА: Переменная 'lst2D' должна быть списком, а не {type(lst2D)}.")
-
-            # Проверка, что все элементы lst2D — это списки
-            for row in lst2D:
-                if not isinstance(row, list):
-                    raise ValueError(
-                        f"ОШИБКА: Каждый элемент lst2D должен быть списком, но найден элемент типа {type(row)}."
-                    )
-
-                # Проверка, что все элементы внутри вложенных списков — это целые числа
-                for elem in row:
-                    if not isinstance(elem, int):
-                        raise ValueError(
-                            f"ОШИБКА: Все элементы во вложенных списках должны быть целыми числами, найдено: {type(elem)}."
-                        )
+            lst2D = getattr(user_module, "lst2D")
 
             # Проверка, что lst2D соответствует ожидаемому результату
             if lst2D != expected_output[i]:
                 raise ValueError(
                     f"------------- FAIL Тест: {i + 1} --------\n"
-                    f"Входные данные: {test_input[i]}\n"
+                    f"Входные данные:\n{test_input[i]}\n"
                     f"Ожидалось: {expected_output[i]}\nно получено: {lst2D}\n"
                 )
-
-            # Сборка отчёта по тесту
-            test_result = []
-            test_result.append(f"---------------OK Тест: {i + 1} --------------")
-            test_result.append(f"Входные данные: {test_input[i]}")
-            test_result.append(f"Ожидалось: {expected_output[i]}")
-            test_result.append(f"Получено: {lst2D}\n")
 
             # Добавляем в общий результат
             result.append("\n".join(test_result))
@@ -151,5 +131,6 @@ def test_9_3_3_1(path_tmp_file: str):
         return "\n".join(result)
 
     except Exception as e:
+        # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
-        raise RuntimeError(f"Ошибка выполнения кода:\n\n{error_info}")
+        raise RuntimeError(f"Ошибка выполнения кода:\n{error_info}")
