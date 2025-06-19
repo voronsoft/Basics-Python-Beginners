@@ -1,9 +1,9 @@
 # 9_9_3 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_9_9_3(path_tmp_file: str, task_num_test: str):
@@ -16,6 +16,9 @@ def test_9_9_3(path_tmp_file: str, task_num_test: str):
         # Чтение пользовательского кода
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
 
         # Разбор в AST
         tree = ast.parse(code)
@@ -103,16 +106,12 @@ def test_9_9_3_1(path_tmp_file: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            original_stdin = sys.stdin
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=" ", capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            # Подменяем stdin (заглушка)
-            sys.stdin = StringIO('')
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
-
-            # Выполняем пользовательский модуль
-            spec.loader.exec_module(user_module)
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Получаем из модуля is_string
             is_string = getattr(user_module, "is_string")

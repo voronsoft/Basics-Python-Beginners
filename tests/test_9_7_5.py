@@ -1,9 +1,9 @@
 # 9_7_5 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_9_7_5(path_tmp_file: str, task_num_test: str):
@@ -16,6 +16,9 @@ def test_9_7_5(path_tmp_file: str, task_num_test: str):
         # Чтение пользовательского кода
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code, allowed_imports=["sys"], allowed_calls=["sys.stdin.readlines"])
 
         # Разбор в AST
         tree = ast.parse(code)
@@ -92,6 +95,7 @@ def test_9_7_5(path_tmp_file: str, task_num_test: str):
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
 
+
 def test_9_7_5_1(path_tmp_file: str):
     """Функция тестирования кода пользователя"""
     # Входные данные
@@ -102,8 +106,20 @@ def test_9_7_5_1(path_tmp_file: str):
 
     # Ожидаемые данные вывода
     expected_output = (
-        [['Балакирев', 'рядовой'], ['Портос', 'прапорщик'], ['Атос', 'лейтенант'], ['Арамис', 'лейтенант'], ["д'Артаньян", 'капитан']],
-        [['Атос', 'сержант'], ['Портос', 'прапорщик'], ["д'Артаньян", 'капитан'], ['Арамис', 'подполковник'], ['Балакирев', 'полковник']],
+        [
+            ['Балакирев', 'рядовой'],
+            ['Портос', 'прапорщик'],
+            ['Атос', 'лейтенант'],
+            ['Арамис', 'лейтенант'],
+            ["д'Артаньян", 'капитан'],
+        ],
+        [
+            ['Атос', 'сержант'],
+            ['Портос', 'прапорщик'],
+            ["д'Артаньян", 'капитан'],
+            ['Арамис', 'подполковник'],
+            ['Балакирев', 'полковник'],
+        ],
     )
 
     result = []  # Список для накопления результатов тестов
@@ -114,30 +130,15 @@ def test_9_7_5_1(path_tmp_file: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            original_stdin = sys.stdin
-            original_stdout = sys.stdout
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            # Подменяем stdin с тестовыми данными
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-            # Перенаправляем stdout в буфер
-            sys.stdout = output_buffer
-
-            # Выполняем пользовательский модуль
-            spec.loader.exec_module(user_module)
-            # Получаем перехваченный вывод из print()
-            captured_output = output_buffer.getvalue().strip()
-
-            # Возвращаем поток вывода в норму
-            sys.stdout = original_stdout
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Получаем из модуля список
             user_lst = getattr(user_module, "lst")
-            print("lst", user_lst)
 
             # Формируем отчет по тесту
             test_result = []
@@ -149,15 +150,17 @@ def test_9_7_5_1(path_tmp_file: str):
             if user_lst == expected_output[i]:
                 test_result.append(f"Получено: {user_lst}\n")
             else:
-                raise RuntimeError(f"------------- FAIL Тест: {i + 1} --------\n"
-                                   f"Ошибка: список lst формируется НЕ правильно.\n"
-                                   f"Ожидалось:\n{expected_output}\nно получено:\n{user_lst}"
-                                   )
+                raise RuntimeError(
+                    f"------------- FAIL Тест: {i + 1} --------\n"
+                    f"Ошибка: список lst формируется НЕ правильно.\n"
+                    f"Ожидалось:\n{expected_output}\nно получено:\n{user_lst}"
+                )
 
             result.append("\n".join(test_result))
 
         return "\n".join(result)
 
     except Exception as e:
+        # Добавляем информацию об ошибке к результатам
         error_info = "\n".join(result) + f"\n{e}"
         raise RuntimeError(f"Ошибка выполнения кода:\n{error_info}")

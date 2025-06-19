@@ -1,9 +1,8 @@
 # 9_6_4 тест для задачи
 import ast
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_9_6_4(path_tmp_file: str, task_num_test: str):
@@ -73,25 +72,12 @@ def test_9_6_4_1(path_tmp_file: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            original_stdin = sys.stdin
-            original_stdout = sys.stdout
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            # Подменяем stdin с тестовыми данными
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-
-            # Перенаправляем stdout в буфер
-            sys.stdout = output_buffer
-
-            # Выполняем пользовательский модуль
-            spec.loader.exec_module(user_module)
-
-            # Получаем перехваченный вывод из print()
-            captured_output = output_buffer.getvalue().strip()
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Формируем отчет по тесту
             test_result = []
