@@ -14,6 +14,7 @@ def test_7_6_4(path_tmp_file: str, task_num_test: str):
     try:
         with open(path_tmp_file, 'r', encoding='utf-8') as f:
             user_code = f.read()
+
         # Безопасность кода пользователя: читаем код и проверяем его до запуска
         check_code_safety(user_code)
 

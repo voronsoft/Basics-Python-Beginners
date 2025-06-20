@@ -15,6 +15,7 @@ def test_8_6_2(path_tmp_file: str, task_num_test: str):
 
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+
         # Безопасность кода пользователя: читаем код и проверяем его до запуска
         check_code_safety(code)
 

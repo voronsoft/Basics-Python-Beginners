@@ -28,6 +28,7 @@ def test_6_3_3(path_tmp_file: str, task_num_test: str):
         # Безопасность кода пользователя: читаем код и проверяем его до запуска
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             user_code = f.read()
+
         # Проверка кода на безопасность
         check_code_safety(user_code, allowed_imports=["sys"], allowed_calls=["sys.stdin.readlines"])
 

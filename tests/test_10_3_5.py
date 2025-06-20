@@ -15,8 +15,9 @@ def test_10_3_5(path_tmp_file: str, task_num_test: str):
         # Считываем код из временного файла
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+
         # Безопасность кода пользователя: читаем код и проверяем его до запуска
-        check_code_safety(code)
+        check_code_safety(code, allowed_imports=["sys"], allowed_calls=["sys.stdin.readlines"])
 
         # Упрощённая проверка
         if "shuffle" not in code:

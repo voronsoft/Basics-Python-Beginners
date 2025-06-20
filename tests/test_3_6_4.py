@@ -11,7 +11,7 @@ def test_3_6_4(path_tmp_file: str, task_num_test: str):
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
 
-    # Проверка кода на безопасность
+    # Безопасность кода пользователя: читаем код и проверяем его до запуска
     check_code_safety(user_code)
 
     # Проверяем, содержит ли код хотя бы одну f-строку вида:
