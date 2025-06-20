@@ -1,8 +1,8 @@
 # 10_3_7 тест для задачи
 import importlib.util
-import sys
 
-from io import StringIO
+from utils.code_security_check import check_code_safety
+from utils.stdin_stdout_stderr_interceptor import stream_interceptor
 
 
 def test_10_3_7(path_tmp_file: str, task_num_test: str):
@@ -12,8 +12,11 @@ def test_10_3_7(path_tmp_file: str, task_num_test: str):
     try:
         result.append("-------------Тест structure -------------")
 
+        # Считываем код из временного файла
         with open(path_tmp_file, "r", encoding="utf-8") as f:
             code = f.read()
+        # Безопасность кода пользователя: читаем код и проверяем его до запуска
+        check_code_safety(code)
 
         # Упрощённая проверка
         if "N = int(input())" not in code:
@@ -59,29 +62,12 @@ def test_10_3_7_1(path_tmp_file: str):
             spec = importlib.util.spec_from_file_location("user_module", path_tmp_file)
             user_module = importlib.util.module_from_spec(spec)
 
-            original_stdin = sys.stdin
-            original_stdout = sys.stdout
+            # Используем контекстный менеджер для подмены потоков
+            with stream_interceptor(stdin_data=test_input[i], capture_stdout=True, capture_stderr=True) as streams:
+                spec.loader.exec_module(user_module)  # Выполняем код модуля
 
-            # Подменяем stdin с тестовыми данными
-            sys.stdin = StringIO(test_input[i])
-            # Заглушка для sys.stderr
-            original_stderr = sys.stderr  # сохраняем оригинал
-            sys.stderr = StringIO()  # подменяем на буфер
-
-            # Создаем буфер для перехвата вывода
-            output_buffer = StringIO()
-            sys.stdout = output_buffer
-
-            # Удаляем модуль из кэша, при повторном импорте
-            if "user_module" in sys.modules:
-                del sys.modules["user_module"]
-
-            # Выполняем пользовательский модуль
-            spec.loader.exec_module(user_module)
-
-            # Возвращаем stdout и stdin обратно
-            sys.stdout = original_stdout
-            sys.stdin = original_stdin
+            # Получаем перехваченный вывод из stdout
+            captured_output = streams["stdout"].getvalue().rstrip() if streams["stdout"] else ""
 
             # Получаем переменную P из модуля
             P = getattr(user_module, "P")
@@ -92,7 +78,7 @@ def test_10_3_7_1(path_tmp_file: str):
             test_result.append(f"Входные данные: {test_input[i]}")
 
             # Проверка правильности поля
-            ok, message = check_field(P, M = 10)
+            ok, message = check_field(P, M=10)
             if ok:
                 test_result.append(f"Правильное решение !! {message}\n")
             else:
@@ -107,7 +93,7 @@ def test_10_3_7_1(path_tmp_file: str):
         raise RuntimeError(f"Ошибка выполнения кода:\n{error_info}")
 
 
-def check_field(P, M = 10):
+def check_field(P, M=10):
     """Проверка:
     - Ровно M единиц;
     - Единицы не касаются друг друга (в т.ч. по диагонали).
