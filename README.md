@@ -57,6 +57,6 @@
 
 ---
 ## Запуск приложения для новичков и не только
-1. [Как запустить эту программу ?](README_1_run_as_python_script.md)  
-2. [Как создать .EXE и запустить эту программу ?](README_2_run_as_windows_application.md)  
-3. [Как создать .EXE и создать инсталлятор для windows 11 ?](README_3_run_as_installer_windows_application.md)
+**1. [Как запустить эту программу ?](README_1_run_as_python_script.md)**  
+**2. [Как создать .EXE и запустить эту программу ?](README_2_run_as_windows_application.md)**  
+**3. [Скачать готовое приложение для Windows 11 (инсталлятор)](README_3_run_as_installer_windows_application.md)**  

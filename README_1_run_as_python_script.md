@@ -14,11 +14,10 @@
 **Автономный режим** — это значит, что видео файлы для тем будут воспроизводиться из папки проекта, но для этого нужно будет кое-что сделать.
 
 Нужно скачать папку с видео уроками с Google Drive диска по этой ссылке:  
-[Скачать с Google Drive](https://drive.google.com/drive/folders/1SfGQPMo_QEpEPovP6XomKNMlFXAfftdn?usp=drive_link)
+[Скачать с Google Drive](https://drive.google.com/file/d/1E5Y1WA4_ylaZfu8cCgB8STrtYicCx9DL/view?usp=sharing)
 
-По адресу будет две сжатых папки с необходимыми файлами:
+По адресу будет сжатая папка с необходимыми файлами:
 - `tasks_video.zip` — каталог с видео в формате `.mp4`
-- `installer_files.zip` — каталог для создания инсталлятора приложения (об этом позже)
 
 Распаковываем папку `tasks_video.zip` в корень проекта.
 

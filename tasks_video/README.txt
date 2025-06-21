@@ -3,6 +3,6 @@
 
 !!! ФАЖНО для работы приложения в автономном режиме.
 Файлы с видео для занятий можно скачать с google-drive по адресу:
-https://drive.google.com/drive/folders/1SfGQPMo_QEpEPovP6XomKNMlFXAfftdn?usp=drive_link
+https://drive.google.com/drive/folders/1SfGQPMo_QEpEPovP6XomKNMlFXAfftdn?usp=sharing
 Распакуйте видео в папку tasks_video в корне проекта.
 Все видео будет работать автономно во встроенном плеере ОС Windows.
