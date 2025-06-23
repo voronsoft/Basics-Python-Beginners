@@ -692,26 +692,6 @@
 </details>
 
 <details>
-  <summary>📁 templates_wxPython_files_html/</summary>
-
-  <details>
-    <summary>📁 other/</summary>
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [check_task.fbp](templates_wxPython_files_html/other/check_task.fbp)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [error_window_msg.fbp](templates_wxPython_files_html/other/error_window_msg.fbp)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [MainWindow.fbp](templates_wxPython_files_html/other/MainWindow.fbp)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [radio_task.fbp](templates_wxPython_files_html/other/radio_task.fbp)  
-  </details>
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [test_6_6_6_import_module.py](templates_wxPython_files_html/test_6_6_6_import_module.py)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [test_7_12_4_context_manager_stdin_out_err.py](templates_wxPython_files_html/test_7_12_4_context_manager_stdin_out_err.py)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [test_code.py](templates_wxPython_files_html/test_code.py)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [test_code_structure_inspect.py](templates_wxPython_files_html/test_code_structure_inspect.py)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [test_dragdrop.py](templates_wxPython_files_html/test_dragdrop.py)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [test_question.py](templates_wxPython_files_html/test_question.py)  
-</details>
-
-<details>
   <summary>📁 tests/</summary>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -📄 [__init__.py](tests/__init__.py)  
@@ -1231,12 +1211,10 @@
  -📄 [config.py](config.py)  
  -📄 [LICENSE](LICENSE)  
  -📄 [NOTICE.md](NOTICE.md)  
- -📄 [project_notes.txt](project_notes.txt)  
  -📄 [pyproject.toml](pyproject.toml)  
  -📄 [README.md](README.md)  
  -📄 [README_1_run_as_python_script.md](README_1_run_as_python_script.md)  
  -📄 [README_2_run_as_windows_application.md](README_2_run_as_windows_application.md)  
  -📄 [README_3_run_as_installer_windows_application.md](README_3_run_as_installer_windows_application.md)  
  -📄 [requirements.txt](requirements.txt)  
- -📄 [tst.py](tst.py)  
  -📄 [WebView2Loader.dll](WebView2Loader.dll)  

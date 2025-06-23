@@ -61,8 +61,6 @@ def create_project_tree_files(
         f_md.write(f"# Структура проекта (Basics Python Beginners)\n\n")
         f_md.writelines(line + '\n' for line in tree_lines)
 
-    print(f"✅ Markdown-файл сохранён: {md_file}")
-
 
 if __name__ == '__main__':
     """Запуск генерации дерева файлов в проекте"""
@@ -78,5 +76,6 @@ if __name__ == '__main__':
             'dist',
             'installer_files',
             'README_project_tree.md',
+            'project_notes.txt',
         ],
     )

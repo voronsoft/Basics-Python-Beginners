@@ -168,7 +168,6 @@ class TaskTree(wx.TreeCtrl):
             # Проверяем корневой элемент
             root = self.GetRootItem()
             if not root.IsOk() or self.GetItemText(root) != path[0]:
-                print("Корневой элемент не совпадает")
                 self.Expand(root)
                 self.SelectItem(root)
                 # Прокручиваем влево
@@ -186,7 +185,6 @@ class TaskTree(wx.TreeCtrl):
 
                 while child.IsOk():
                     child_text = self.GetItemText(child)
-                    # print(f"Сравниваем: '{child_text}' с '{label}'")
                     if child_text == label:
                         parents_to_expand.append(current_item)
                         current_item = child
@@ -195,7 +193,6 @@ class TaskTree(wx.TreeCtrl):
                     child, cookie = self.GetNextChild(current_item, cookie)
 
                 if not found:
-                    print(f"Элемент '{label}' не найден")
                     break
 
             # Если дошли до конца пути
@@ -219,7 +216,6 @@ class TaskTree(wx.TreeCtrl):
                 self.SetScrollPos(wx.HORIZONTAL, 0)
 
         except Exception as e:
-            print(f"Ошибка при восстановлении состояния: {e}")
             # При ошибке выбираем корень
             root = self.GetRootItem()
             self.Expand(root)

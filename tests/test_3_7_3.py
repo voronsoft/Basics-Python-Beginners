@@ -7,7 +7,6 @@ def test_3_7_3(path_tmp_file: str, task_num_test: str):
     # Проверяем, содержит ли код список из задачи c = ['Токио', 'Берлин', 'Париж', 'Лондон', 'Нью-Йорк', 'Сидней', 'Пекин']
     with open(path_tmp_file, "r", encoding="utf-8") as f:
         user_code = f.read()
-        print(5644, user_code)
 
     string = "c = ['Токио', 'Берлин', 'Париж', 'Лондон', 'Нью-Йорк', 'Сидней', 'Пекин']"
 

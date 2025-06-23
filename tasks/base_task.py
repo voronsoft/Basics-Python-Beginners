@@ -38,7 +38,6 @@ class BaseTask(wx.Panel):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
         # Главный родитель класса
         self.top_parent = self.GetTopLevelParent()
-        # print("22 base task:", self.top_parent)
 
         self.top_sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -63,7 +62,6 @@ class BaseTask(wx.Panel):
             file_path = TASKS_DESCR_HTML_PATH / self.descr_file
             file_url = file_path.as_uri()  # Автоматическое преобразование в file:// URL
 
-            # print("1-Адрес загруженной страницы:", file_url)
             self.browser.LoadURL(file_url)
 
         else:
@@ -124,7 +122,7 @@ class BaseTask(wx.Panel):
                 data_part = url.split("data=")[1]
                 decoded_data = urllib.parse.unquote(data_part).replace(r"\n", " ").replace("  ", "")
                 data_dict = json.loads(decoded_data)
-                # print("получ дан от пользователя dragdrop\n", data_dict)
+
                 test_name = self.test_file_task
                 # Получаем функцию для тестирования
                 test_run = get_test_func(test_name)
@@ -132,7 +130,6 @@ class BaseTask(wx.Panel):
                 test_run(data_dict)
                 # Изменяем статус задачи в дереве заданий меняя стандартную иконку на иконку success.ico
                 self.top_parent.task_tree.update_task_icon(self.test_file_task.replace("descr", "task"))
-                # print(f"(on_webview_event- {test_name.replace("descr","task")}) иконка в дереве заданий изменена на success.ico")
 
                 wx.MessageBox("Правильно! Тест пройден успешно", f"{test_name} Результат")
             except Exception as e:
@@ -146,10 +143,8 @@ class BaseTask(wx.Panel):
 
     def on_message_received(self, event):
         """Обработчик отвечает за тип задачи - Выберите правильный ответ"""
-        # print("Отработал - on_message_received")
         # Получаем данные из JavaScript на html странице
         selected_data = event.GetString() # .replace("[", "").replace("]", "")
-        # print("12366 Выбран ответ:", selected_data)
 
         if selected_data in self.user_selected_fields:
             event.Veto()
@@ -165,7 +160,6 @@ class BaseTask(wx.Panel):
             test_run(self.user_selected_fields)
             # Изменяем статус задачи в дереве заданий меняя стандартную иконку на иконку success.ico
             self.top_parent.task_tree.update_task_icon(self.test_file_task.replace("descr","task"))
-            # print(f"(on_message_received- {test_name.replace("descr","task")}) иконка в дереве заданий изменена на success.ico")
             wx.MessageBox("Отлично! Тест пройден успешно", f"{test_name} Результат")
 
             # Если все задачи решены выводим окно поздравления (генерация сертификата)

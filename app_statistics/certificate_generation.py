@@ -41,7 +41,6 @@ class CertificateFrame(wx.Dialog):
             # Формируем путь к файлу с описанием
             file_path = TASKS_DESCR_HTML_PATH / "certificate.html"
             file_url = file_path.as_uri()  # Автоматически формирует file:// URL
-            print("Адрес загруженной страницы:", file_url)
             self.browser_sert.LoadURL(file_url)
 
         else:

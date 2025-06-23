@@ -34,7 +34,6 @@ def get_class():
         return task_class  # Возвращаем класс
 
     except (ModuleNotFoundError, AttributeError) as e:
-        # print(f"Ошибка при импорте модуля или класса: {e}")
         return None  # Возвращаем None, если произошла ошибка
 
 
@@ -43,27 +42,21 @@ def get_test_func(task_name):
 
     # Формируем имя модуля тестов
     module_name = f"tests.{task_name.lower().replace('descr', 'test')}"
-    # print("module_name", module_name)
     # Формируем имя тестовой функции
     test_func = task_name.lower().replace('descr', 'test')
-    # print("test_func", test_func)
 
     # Динамически импортируем модуль с тестом
     try:
         module = importlib.import_module(module_name)
-        # print(f"(get_test_func) Модуль {module_name} успешно импортирован!")
     except ImportError as e:
-        # print(f"(get_test_func) Ошибка импорта модуля: {e}")
         raise ImportError(f"(get_test_func) Ошибка импорта модуля: {e}")
 
     # Получаем тестовую функцию
     try:
         test_function = getattr(module, test_func)
-        # print("Функция найдена и импортирована")
         return test_function  # Возвращаем тестовую функцию
 
     except AttributeError as e:
-        # print(f"(get_test_func) Функция {test_func} не найдена в модуле\n({e})")
         raise AttributeError(f"(get_test_func) Функция {test_func} не найдена в модуле\n({e})")
 
 
@@ -139,9 +132,7 @@ def delete_code_temp_file(file_path: str) -> None:
     """
     if os.path.exists(file_path):
         os.remove(file_path)
-        # print(f"Файл {file_path} удален.")
     else:
-        # print(f"Файл {file_path} не существует.")
         return
 
 
@@ -210,7 +201,6 @@ def video_file_run(task_name):
         )
         if dlg.ShowModal() == wx.ID_YES:
             link = next((link for key, link in tasks_video_links.items() if task_name.lower() in key.lower()), None)
-            # print("link:", link)
             if link:
                 if not wx.LaunchDefaultBrowser(link):
                     wx.MessageBox(
@@ -247,10 +237,8 @@ def read_json_file(file_path: Union[str, Path]) -> Dict[str, Any]:
         alternative_path = exe_dir / "data" / file_path.name  # Используем имя файла из переданного пути
 
         if file_path.is_file():
-            # print(f"[INFO (.exe)- по переданному пути в функцию] Найден файл по переданному пути: {file_path}")
             target_path = file_path
         elif alternative_path.is_file():
-            # print(f"[INFO (.exe)- по альтернативному пути] Найден файл рядом с EXE: {alternative_path}")
             target_path = alternative_path
         else:
             raise FileNotFoundError(
@@ -259,7 +247,6 @@ def read_json_file(file_path: Union[str, Path]) -> Dict[str, Any]:
     else:
         # Если запущено как обычный скрипт
         target_path = file_path  # Используем имя файла из переданного пути
-        # print(f"[INFO (script Python)- найден в папке проекта: {file_path}")
 
         if not target_path.is_file():
             raise FileNotFoundError(f"Файл не найден в папке проекта: {target_path}")
@@ -292,11 +279,9 @@ def write_json_file(data: Dict[str, Any], file_path: Union[str, Path]) -> bool:
 
         # 1. Проверяем файл по переданному пути
         if file_path.is_file():
-            # print(f"[INFO] Запись в файл по переданному пути: {file_path}")
             target_path = file_path
         # 2. Если нет, проверяем по альтернативному пути рядом с EXE
         elif alternative_path.is_file():
-            # print(f"[INFO] Запись в файл рядом с EXE: {alternative_path}")
             target_path = alternative_path
         # 3. Если не нашли, выбрасываем исключение
         else:
@@ -305,8 +290,6 @@ def write_json_file(data: Dict[str, Any], file_path: Union[str, Path]) -> bool:
             )
     else:
         # Если запущено как обычный скрипт
-        # print(f"[INFO] Запись в файл по переданному пути (как скрипт): {file_path}")
-
         # Проверяем наличие файла по переданному пути
         if not file_path.is_file():
             raise FileNotFoundError(f"Запись в файл невозможна, так как файл не найден по пути: {file_path}")
@@ -323,17 +306,13 @@ def write_json_file(data: Dict[str, Any], file_path: Union[str, Path]) -> bool:
                 ensure_ascii=False,
             )
 
-        # print(f"[INFO] Данные успешно записаны в файл: {target_path}")
         return True
 
     except (OSError, IOError) as e:
-        # print(f"[ERROR] Ошибка файловой системы: {e}")
         return False
     except TypeError as e:
-        # print(f"[ERROR] Ошибка сериализации JSON (неподдерживаемый тип данных): {e}")
         return False
     except Exception as e:
-        # print(f"[ERROR] Неожиданная ошибка: {e}")
         return False
 
 

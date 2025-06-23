@@ -107,7 +107,7 @@ class ClearStatusTask(wx.Dialog):
                 # Обновляем дерево заданий в родительском окне.
                 # Возвращаем задаче иконку по умолчанию
                 default_icon_task = lst_task_type[task + ".py"] if task + ".py" in lst_task_type else None
-                print(9000, default_icon_task)
+
                 self.top_parent.task_tree.set_default_task_icon(task, icon_type=default_icon_task)
 
         # Обновляем список с задачами после очистки статуса

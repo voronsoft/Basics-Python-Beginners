@@ -47,9 +47,6 @@ def test_5_3_6(path_tmp_file: str, task_num_test: str):
 
             # Получаем результат (stdout)
             output = process.stdout.strip()
-            print("-----------")
-            print(output)
-            print("-----------")
             # Получаем сообщения об ошибках
             error = process.stderr.strip()
             if error:  # Если есть ошибки в коде выводим

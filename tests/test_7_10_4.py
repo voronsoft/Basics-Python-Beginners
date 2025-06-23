@@ -141,9 +141,6 @@ def test_7_10_4_1(path_tmp_file: str, outer_func):
             # Получаем результат
             answer = inn_fnc(string)
 
-            print("captured_output", captured_output)
-            print("answer", answer)
-
             # Проверяем результат перехваченного вывода и то что возвращает функция при прямом обращении
             if captured_output == expected_output[i] and answer == expected_output[i]:
                 test_result.append(f"Получено: {captured_output}\n")

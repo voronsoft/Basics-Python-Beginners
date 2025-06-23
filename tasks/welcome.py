@@ -31,7 +31,6 @@ class WelcomePage(wx.Panel):
             # Формируем путь к файлу с описанием
             file_path = TASKS_DESCR_HTML_PATH / "a_welcome.html"
             file_url = file_path.as_uri()  # Автоматически формирует file:// URL
-            # print("Адрес загруженной страницы:", file_url)
             self.browser.LoadURL(file_url)
 
         else:

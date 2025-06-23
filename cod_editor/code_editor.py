@@ -210,7 +210,6 @@ class Editor(wx.Panel):
                 if thonny_path.exists():
                     subprocess.Popen([str(thonny_path), file_path])  # Запускаем Thonny с файлом
                 elif alternative_path.exists():
-                    # print(alternative_path)
                     subprocess.Popen([str(alternative_path), file_path])  # Запускаем Thonny с файлом
                 else:
                     wx.MessageBox(
@@ -625,7 +624,6 @@ class PythonEditor(stc.StyledTextCtrl):
 
                 # Берём последний символ перед курсором
                 last_char = text_before_cursor[-1]
-                # print("Символ перед курсором", repr(last_char))
 
                 # Вычисляем его длину в байтах
                 char_size = len(last_char.encode("utf-8"))

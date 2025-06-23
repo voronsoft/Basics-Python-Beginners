@@ -411,7 +411,7 @@ class MainFrame(wx.Frame):
             self.status_bar.SetStatusText(f"RAM: {ram:.1f} Mb", 1)  # RAM вторая секция
             self.status_bar.SetStatusText(f"CPU: {cpu:.1f}%", 2)  # CRU третья секция
         except Exception as e:
-            print(f"Ошибка мониторинга: {e}")
+            return None  # Возвращаем None, если произошла ошибка
 
     # END Обработчики статус бара и статистики RAM
 

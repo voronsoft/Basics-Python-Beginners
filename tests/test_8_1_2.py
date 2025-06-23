@@ -72,7 +72,6 @@ def test_8_1_2(path_tmp_file: str, task_num_test: str):
 
     except Exception as e:
         error_info = "\n".join(result) + f"\n{e}"
-        print(error_info)
         raise RuntimeError(f"Ошибка выполнения теста:\n\n{error_info}")
 
 

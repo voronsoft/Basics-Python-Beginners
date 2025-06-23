@@ -68,11 +68,8 @@ class AiWindow(wx.Frame):
 
     def on_close(self, event):
         """Обнуляем ссылку при закрытии окна"""
-        # print("!!!!", self.GetParent())
         if self.GetParent():
-            # print(self.GetParent().ai_helper_window)
             self.GetParent().ai_helper_window = None
-            # print(self.GetParent().ai_helper_window)
         self.Destroy()
 
 

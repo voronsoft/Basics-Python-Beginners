@@ -47,7 +47,6 @@ def test_3_8_7(path_tmp_file: str, task_num_test: str):
 
             # Получаем результат (stdout)
             output = process.stdout.strip()
-            print("324output", output)
             test_result = list()
             test_result.append(f"---------------OK Тест: {i + 1} --------------")
             test_result.append(f"Входные данные: {test_input[i]}")
